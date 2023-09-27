@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+  <TITLE>Ximview: Colour and Scaling</TITLE>
+  <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<DIV id="content">
+<H1>Colour and Scaling</H1>
+<div id="nav">
+<ul>
+  <LI> <a href="#TRANS">Transfer functions</a>
+  <LI> <a href="#AUTO">Auto-scaling</a>
+  <LI> <a href="#PRESER">Preserve-colour 
+      option</a>
+</ul>
+</div>
+<p>Astronomical images usually have large dynamic range, so a simple scaling,
+where the faintest pixel is black and the brightest white, will leave the vast
+majority of pixels indistinguishable from black. We increase the contrast both
+by using pseudo-colour look-up table (LUT) to get finer discrimination 
+between nearby intensity levels
+levels, and also by using a non-linear trasfer function between intensity
+and bytes. <strong>Note</strong> the numerical values of intensity reported
+by ximview are from the original image, unaffected by LUT or transfer 
+function.
+
+<h2><a name="TRANS">Transfer functions</a></h2>
+
+<p>In the first step, the original image data is scaled into [0, 255]
+via a "transfer function", then these values are interpreted as
+colours via the colour table.
+
+<p>Ximview currently supports the following transfer functions:
+<dl>
+<dt>Linear</dt>
+<dd>Output proportional to <i>(intensity &minus; min)</i>.
+<p> Here and below, <i>min</i> is the 
+minimum in the requested 
+<KBD><a href="comline.html#RANGE" target="frame2">range</a></KBD> (which
+defaults to the data minimum).
+</dd>
+<dt>Sqrt</dt><dd>   Output proportional to 
+&radic;(<i>intensity &minus; min</i>), or zero if argument is negative.
+</dd>
+<dt>Asinh</dt><dd>  Output proportional to
+<blockquote>
+Asinh<i>((intensity &minus; zero) / &beta;)</i> 
+&minus; <i>Asinh((min &minus; zero) / &beta;)</i>.
+</blockquote>
+<i>Zero</i> and <i>&beta;</i> can be set via the 
+<a href="menu.html#ADJUST">Adjust Scaling</a> dialog on the 
+<a href="menu.html#DISPLAY">display menu</a>, 
+or by <a href="autoscale.html">auto-scaling</a>.  
+This gives linear scaling for 
+<i>|intensity| &lt;&lt; &beta;</i>, and logarithmic for 
+<i>|intensity| &gt;&gt; &beta;</i>. 
+Choosing &beta; a few times the noise gives good results. Prior to 
+autoscaling, the default &beta; is 1 unit, which probably won't work.
+
+</dd><dt>Hist Eq</dt><dd>(Histogram equalization). 
+Output is an irregular mapping of the 
+          intensities between range min and range max, chosen to give equal 
+          number of pixels per increment of the output scale.
+</dd></dl>
+
+<p>Asinh scaling is strongly recommended for high dynamic-range images.
+
+<p>The byte scaling of data outside the requested input range of intensities
+is controlled by the 
+<KBD><a href="comline.html#WRAP" target="frame2">WRAP</a></KBD>
+parameter.
+
+<h2><a name="AUTO">Auto-scaling</a></h2>
+
+<p>The auto-scaling algorithm aims to scale the image so that
+"noise-like" fluctuations around the zero level are visible but don't
+use up too much of the colour scale, so that bright features are
+visible rather than being completely saturated. The results depend on
+the current <a href="menu.html#COLTAB" target="frame2">colour table</a> and 
+<a href="#TRANS">transfer function</a>.
+
+<p>It works in two stages:
+
+<h3>Stage 1: Robust estimate of image rms and mode</h3>
+
+<p>This stage may be quite time-consuming for large images, but its
+results are permanently recorded so it is not repeated if you need to
+re-run auto-scale.
+
+<p>Floating-point Not-a-Number (NaNs) and infinities are rejected as bad
+data.  If more than 10<sup>&minus;5</sup> of the pixels are exactly zero, it is
+assumed that zero also marks bad data and these are rejected.
+
+<p>A first guess is made by finding the rms and mean of the good
+data. These are used to choose bins for a histogram, covering &plusmn; 2&sigma;
+around the mean, with enough points in each bin to make random
+fluctuations unlikely to change the mode. If the modal bin falls in
+the outer 20% of the histogram, the histogram is re-made with finer
+bins, centred on the mode, and this is iterated if necessary.
+
+<p>The final mode is found by a quadratic fit to the five bins centred on
+the histogram peak. This is our estimate of the true zero level. The
+noise estimate is the one-sided rms below the mode if the mode is lower than
+the mean (as it usually is), and above the mode if the mode is higher than 
+the mean, indicating significant features at negative intensities. (Perfectly
+legitimate for images of quantities like Stokes Q or U).</p>
+
+<p>On request, the histogram and quadratic fit will be plotted in a pop-up 
+window if you run auto-scale from the 
+<a href="menu.html#FILE" target="frame2">Load FITS</a> or 
+<a href="menu.html#ADJUST" target="frame2">Adjust scaling</a> 
+dialogs.  For large HEALPix images it is quicker to
+run auto-scale when the data is first loaded, because then there is no
+need to process the large number of "off-sky" pixels which pad out the
+2-D projected image.</p>
+
+<p><strong>Note</strong> This algorithm will fail if the histogram is 
+montonically decreasing, e.g. as often occurs in Maximum Entropy (MEM) images.
+
+
+<h3>Stage 2: Choose the range, zero and beta</h3>
+
+<p>The estimated zero level is set to the mode. The beta parameter for
+Asinh scaling is set to 2&sigma; (1.5&sigma; for the red-black-blue colour 
+table).
+
+<p>The image is classified as positive, negative or neutral according to
+whether <i>(max &minus; mode) / (mode &minus; min)</i> is &gt; 5, &lt; 0.2, 
+or in between. If
+neutral, the scale is set symmetrically around the mode; if positive
+it runs from <i>mode &minus; 3&sigma;</i> to a large positive value, 
+and vice-versa
+for negative images.  The scale is truncated at the actual minimum and
+maximum if this prescription exceeds them. The total range is
+chosen according to the colour table and transfer function in use.
+For linear scaling it varies from 50&sigma; for the
+very contrasty "Cyclic" scale to 18&sigma; for the "Red-black-blue"
+scale. The ranges are 
+squared for the Sqrt function, and the whole data range is used for
+Asinh. Histogram equalization uses a nominal range of 400&sigma;.
+
+<h2><a name="PRESER">"Preserve Colour" Option</a></h2>
+
+<p>The RGB dialog gives you the option of using the algorithm of 
+<a href="http://adsabs.harvard.edu/abs/2004PASP..116..133L" 
+target="_TOP">Lupton et al. (2004, PASP, 116, 816)</a> 
+to re-scale the input images to preserve
+"true" colour. With this set, the colour displayed represents the 
+<i>linear</i> ratios of the input channels, prior to any 
+<a href="transfun.html">transfer function</a>
+scaling. When this option is chosen a second dialog box prompts you to
+choose <b>rescale factors</b> for the three channels and a <b>display range</b>
+and <b>transfer function</b> for the average image. This works as follows:
+
+<p>Let <i>T<sub>i</sub></i> be the intensity in colour channel <i>i</i>, 
+<i>z<sub>i</sub></i> be the zero level
+recorded for that channel 
+(via the <a href="menu.html#ADJUST">Adjust Scaling</a> dialog), 
+<i>A<sub>i</sub></i> be its rescale factor, and <i>r<sub>1</sub></i>, 
+<i>r<sub>2</sub></i> be the minimum and maximum
+of the display range set for the average image. We calculate
+<ol>
+<li><i> T<sup>c</sup><sub>i</sub>  = A<sub>i</sub> &times; 
+(T<sub>i</sub>&minus; z<sub>i</sub>)</i><BR>
+(corrected channel image)
+
+<p><i>A<sub>i</sub></i> can compensate for different units on different 
+channels or just rescale channels to get a more interesting-looking result.
+
+<li> <i>T<sub>Av</sub> = (1 / N<sub>i</sub>)
+</i>&sum;<i><sub>i</sub></i>( <i>T<sup>c</sup><sub>i</sub></i>)<BR>
+(Average over colour channels)
+
+<li> <i>F<sub>Av</sub></i> = TransferFunction(<i>T<sub>Av</sub>, 
+r<sub>1</sub>, r<sub>2</sub></i>)<BR>
+(Transformed average image, mapping <i>r<sub>1</sub></i> to zero and 
+<i>r<sub>2</sub></i> to maximum brightness).
+
+<li> <i>F<sub>i</sub> = (T<sup>c</sup><sub>i</sub> &minus; r<sub>1</sub>) 
+&times; (F<sub>Av</sub>/ T<sub>Av</sub>)</i><BR>
+(Transformed channel image)
+</ol>
+<p><i>F<sub>i</sub></i> are used as the colour channels for the R-G-B image. 
+They also replace the displayed images on the original tabs (and look very
+odd). The point is that the <i>F<sub>i</sub></i> have essentially the same 
+ratio as
+<i>T<sup>c</sup><sub>i</sub></i> (exactly so, if <i>r<sub>1</sub></i> = 0), 
+despite the possibly non-linear scaling of the total intensity.  
+Even when <i>F<sub>Av</sub></i> is saturated at the maximum
+value, the <i>F<sub>i</sub></i> preserve the "true" colour. 
+
+<p>Note: the overall scale is adjusted so that the maximum 
+<i>F<sub>i</sub></i> over all channels is equal to the
+maximum colour intensity (255). This tends to give rather dim images
+compared to the alternative, the "saturate to white" option.
+
+<p>The grey levels encoding off-sky and bad pixels are also preserved
+(bad pixels in any channel make that pixel bad in all channels).
+
+<p>The original tabs can be restored via the "Adjust scaling" dialog, but
+then the RGB image will revert to the standard "saturate to white".
+
+<HR>
+<ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="details.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="ancillary.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>
+

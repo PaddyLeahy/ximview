@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ximview: Command line options</TITLE>
+    <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<DIV id="content">
+<h1>Command line options for Ximview</h1>
+<div id=nav>
+<ul>
+  <li><a href="#SYNTAX">Syntax</a>
+  <li><a href="#ARGS">Arguments</a>
+  <li><a href="#KEYS">Keywords</a>
+</ul>
+</div>
+
+<h2 class="API"><a name="SYNTAX">Syntax</a></h2>
+<pre>
+
+ximview [, {Input | /HELP] [, Range  [, {Proj | /NPOLE | /SPOLE} 
+        [, {Order | /RING | /NESTED}]]]] [, COLUMN = col] 
+        [, EXTENSION = ext] [, WRAP = wrap] [, /ROLL] [, NAME = name] 
+        [, LOG = logfile] [, /TEMPORARY] [,/OVERWRITE] [,/EXPERT] [, /VERBOSE] 
+
+</pre>
+The command <code>XIMVIEW</code> with no arguments launches the ximview GUI, 
+giving 
+access to the on-line help and allowing files to be loaded via the 
+<a href="menu.html#FILE" target="frame2">File</a> menu. All the command line
+options except <kbd>/VERBOSE</kbd> can be specified via the GUI interface 
+instead.
+
+<h2 class="API"><a name="ARGS">Arguments</a></h2>
+<dl>
+<dt><kbd><a name="INPUT">Input</a></kbd></dt><dd>can be any of:
+<ul>
+<li> FITS file name (with or without <kbd>'.fits'</kbd> or <kbd>'.FITS'</kbd> 
+extension). Recognised
+formats are standard images (in the primary header and data unit (HDU)
+or stored
+as an image extension), all-sky HEALPix arrays stored in binary table 
+extensions, and "CUT4" format partial-sky HEALPix datasets stored in 
+binary tables containing a <kbd>'PIXEL'</kbd> column, a <kbd>'SIGNAL'</kbd> 
+column, and optionally other columns.
+<li>on-line HEALPix array, or a multidimensional array one of whose axes
+has the appropriate length for a HEALPix map. 
+In the latter case each HEALPix map is
+displayed on a separate tab.
+<li>on-line 2D image or N-D hypercube. The first two dimensions are 
+interpreted as the image dimensions, and each 2-D image slice of the 
+hypercube is displayed on a separate tab.
+<li>IDL structure containing header and data (e.g. as produced by the IDL
+astrolib routine <code>MRDFITS</code>, or the HEALPix 
+routine <code>READ_FITS_S</code>). There may be many data tags containing
+images, all-sky HEALPix, or CUT4 HEALPix, but each tag must contain
+only a 2D image or single HEALPix map.
+<li>IDL pointer to any of the above (also, the structure may contain
+pointers to the data columns, rather than the data arrays themselves).
+<li>Array of IDL pointers to maps or HEALPix arrays.
+</ul>
+</dd>
+<dt><kbd><a name="RANGE">Range</a></kbd></dt><dd>intensity range to 
+display (excluding wrapped
+colour tables). If a scalar, specifies the intensity mapped to the top
+of the colour scale (usually white); the minimum will be the lowest value
+in the data. If a two-number array, [min, max].  If <kbd>'F'</kbd> or 
+<kbd>'Full'</kbd>, use
+the full intensity range of the data. If omitted the data is 
+<a href="lutran.html#AUTO" target="frame2">auto-scaled</a>. 
+For backwards compatibility,
+string values of <kbd>'*', 'A'</kbd> or <kbd>'AUTO'</kbd> 
+also imply auto-scaling. You can also specify three numbers, [min, max, beta],
+which triggers <a href="lutran.html#TRANS" target="frame2">Asinh scaling</a> with those parameters.</dd>
+<dt><kbd><a name="PROJ">Proj</a> = {'GRID' | 'NPOLE' | 'SPOLE'}</kbd></dt>
+<dd>defines the <a href="details.html#PROJ" target="frame2">projection</a> 
+(or sort order) 
+to be used if the input decodes to a HEALPix array. Default is 
+<kbd>'GRID'</kbd> which corresponds to the WCS HPX projection. 
+This is one of the few input parameters which cannot be changed 
+after ximview has loaded its first dataset.</dd>
+<dt><kbd><a name="ORDER">Order</a> = {'RING' | 'NESTED'}</kbd></dt><dd>
+Specify the HEALPix pixel order if there is no FITS header available or
+you wish to overrule it. The default if not specified here or in the
+header is <kbd>'RING'</kbd>.</dd>
+</dl>
+
+<h2 class="API"><a name="KEYS">Keywords</a></h2>
+<dl>
+<dt><kbd><a name="HELP">/HELP</a></kbd></dt>
+<dd>Prints a brief summary of the command line syntax, and stops. If present,
+all other inputs are ignored.</dd>
+<dt><kbd>/NPOLE, /SPOLE</kbd></dt> 
+<dd>Shortcut specifiers that HEALPix data should be gridded into "butterfly" 
+(XPH) projections centred on the North or South Pole, respectively.</dd>
+<dt><kbd>/NESTED, /RING</kbd></dt>
+<dd>Shortcuts for the Order argument. /RING is redundant since it is the
+default, but present for completeness.
+<dt><kbd><A NAME="COLUMN">COLUMN</A></kbd></dt><dd>Array specifying the 
+required data selection.
+
+<p> For HEALPix FITS files, either the column numbers or column names
+(for instance, WMAP files have column 1 = 
+<kbd>'TEMPERATURE'</kbd> and column 2 = <kbd>'N_OBS'</kbd>).<p>  
+<p>In CUT4 files, the first column stored is always
+<kbd>'PIXEL'</kbd>, but this is read by default, so 
+<kbd>COLUMN = 1</kbd> refers to 
+<kbd>'SIGNAL'</kbd>
+and so on.</p> 
+<p>For image files containing a stack of images, <kbd>COLUMN</kbd>
+specifies the <A HREF="details.html#SLICE" target="frame2">slice</A> 
+of the stack required. This option only works if
+the input is a file or structure; if you supply a raw data array, do
+the subsectioning first, e.g.
+<pre>
+
+      HIDL> XIMVIEW, iquv[*,0]
+
+</pre>
+not
+<pre>
+
+      HIDL> XIMVIEW, iquv, COL=0 
+
+</pre>
+which will generate an error.</p>
+</dd>
+
+<dt><kbd>EXTENSION</kbd></dt><dd> the FITS extension to read, or 0 to read
+from the primary HDU. If not specified, the program
+looks first in the primary HDU, then in the
+first extension, then gives up if it cannot find anything interpretable as
+an image or HEALPix dataset.
+</dd>
+
+<dt><kbd><a name="WRAP">/WRAP</a></kbd></dt>
+<dd>Set to give a cyclic mapping between input intensity and TV
+colour: pixels within the specified intensity range are unaffected,
+but pixels outside the range map to a (multiply) cycled colour instead
+of saturating.  Set <kbd>WRAP=-1</kbd> to saturate for intensities below the
+specified range and wrap above it, which is usually preferable.
+</dd>
+
+<dt><kbd>/ROLL</kbd></dt>
+<dd> Set to tell the program to interpret the data as a HEALPix map
+in <kbd>'GRID'</kbd> form and hence allow panning across the 180&deg; to 
+-180&deg;
+divide. This is set automatically if the program already knows the
+format from the header, or because it converted the data into <kbd>'GRID'</kbd>
+format itself.</dd>
+
+<dt><kbd>NAME</kbd></dt><dd> a label for this dataset, used in the overall title
+and sometimes in tab labels if several datasets are loaded. Equivalent
+to the "Title" option in the <b> <a href="menu.html#FITSLOAD"
+target = "frame2">Load FITS</a></b> dialog box.
+If not specified, defaults to 'File n' for the nth dataset loaded.
+</dd>
+
+<dt><kbd>/LOG</kbd></dt><dd>Set to create a unique name for the log file 
+(<kbd>ximview_1.log</kbd>,
+<kbd>ximview_2.log</kbd>, etc), instead of the usual overwriting of
+<kbd>ximview.log</kbd>.  Or set <kbd>LOG=</kbd> a name of your choice.
+</dd>
+
+<dt><kbd>/TEMPORARY</kbd></dt><dd> Set to allow the program to overwrite 
+the input data array, thereby saving memory.</dd>
+
+<dt><kbd><a name="OVERWRTE">/OVERWRITE</a></kbd></dt><dd> If set, overwrites the currently-displayed image with a new one rather than creating a new tab. This only works if there is just one image displayed. In this case the new image does not have to match the old one in any way: it is as if you re-started ximview from scratch.</dd>
+
+<dt><kbd><a name="EXPERT">/EXPERT</a></kbd></dt><dd>Turns off some of the more routine messages. Expert mode remains set for the duration of the session. You can also set it by setting the system variable !ximview_expert = 1. The system variable is created on the first call to ximview, or you can use the IDL command DEFSYSV to create it if you want to set it in your IDL startup file.</dd>
+<dt><kbd><a name="VERB">/VERBOSE</a></kbd></dt><dd> Set to produce a lot of 
+diagnostic and timing information. This also turns on debugging mode, which
+enables options in the <b>File menu</b> to print various internal state 
+variables to the terminal. In the unlikely event that ximview crashes, 
+in this mode it stops somewhere near the crash 
+point and does not execute the tidy-up routines. Instructions for tidying 
+up manually are given <a href="details.html#CRASH" target="frame2">here</a>.
+</dl>
+<HR>
+<ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="menu.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="details.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

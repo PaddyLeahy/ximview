@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ancillary Programs</TITLE>
+    <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<DIV id="content">
+<h1>Ancillary programs</h1>
+This page describes ancillary programs that allow interaction with Ximview from the IDL command line.
+<ul>
+  <li><a href="#XIMGET">Ximget</a>: returns displayed image to the command line</li>
+  <li><a href="#XIMGO">Ximgo</a>: shifts the image to a specified position</li>
+  <li><a href="#XIMCAT">Ximcat</a>: loads and plots a catalogue</li>
+  <li><a href="#XIM_CATCH">Xim_catch</a>: returns ximview control parameters</li>
+</ul>
+<h1><a name="XIMGET">Ximget</a></H1>
+<div id="nav">
+<ul>
+  <li><a href="#GET_SYNTAX">Syntax</a>
+  <li><a href="#GET_RETURN">Return Value</a>
+  <li><a href="#GET_ARGS">Arguments</a>
+  <li><a href="#GET_KEYS">Keywords</a>
+</ul>
+</div>
+<p>ximget returns an image displayed by ximview to the IDL command line.</p>
+
+<h2 class="API"><a name="GET_SYNTAX">Syntax</a></h2>
+<pre>
+
+result = ximget(tab, [header], [,/STRUCTURE]  [,/NO_COPY] [,/POINTER])
+</pre>
+<h2 class="API"><a name="GET_RETURN">Return Value</a></h2>
+
+<p>If <KBD>/STRUCTURE</KBD> is omitted, the return value is the 2-D image
+displayed on the specified tab of ximview. The whole image is returned,
+not just the portion visible within the ximview window. The data type
+will be whatever ximview found in its input. If <KBD>/STRUCTURE</KBD> 
+is set, returned
+value is a structure as described below. If <KBD>/POINTER</KBD> is set, instead
+of the image itself you get a pointer to it.</p>
+
+<p>If the tab is displaying an RGB image, the returned array consists
+of 8-bit bytes and is a "cube" with its third dimension corresponding
+to R,G,B. If <KBD>/POINTER</KBD> is set, an array of three pointers 
+is returned.</p>
+
+<p><strong>Note:</strong> bad and off-sky pixels are returned with value NaN
+(floating point values), zero (integer values), or the actual byte values
+used in the display (RGB images).</p>
+<h2 class="API"><a name="GET_ARGS">Arguments</a></h2>
+<dl>
+<dt><kbd>tab</kbd></dt><dd>Either a string, specifying
+the label of the required tab, or an integer, giving the tab number, 
+starting at zero for the left-most tab.</dd>
+<dt><kbd>header</kbd></dt><dd>If specified, on return will be a 
+string array containing
+the FITS header appropriate for the returned image. Unlike the headers
+displayed on the <a href="menu.html#HEADERS" target = "frame2">Headers</a>
+menu, this is specific to the particular tab and correctly describes
+the location of the returned image slice on any higher-dimensional axes
+present in the original FITS file.</dd>
+</dl>
+<h2 class="API"><a name="GET_KEYS">Keywords</a></h2>
+<dl>
+<dt><kbd>/STRUCTURE</kbd></dt>
+<dd>If set, returns an IDL structure with first tag HDR containing the
+FITS header, and second tag IMG containing the image. Note that this
+gives a peak memory load of more than twice the image size, so should
+be avoided if your image is using up a significant fraction of your 
+available memory.</dd>
+<dt><kbd>/NO_COPY</kbd></dt><dd> If set, the image is transferred rather
+than copied to save memory. Since the image is no longer available to
+ximview, the target tab is deleted. NO_COPY is ignored if /STRUCTURE or 
+<kbd>/POINTER</kbd> are set (because no memory is saved in those cases), or if 
+there is only one tab left. </dd>
+<dt><kbd>/POINTER</kbd> </dt><dd>If set, returns a pointer to the data,
+which remain stored on the heap. This allows both the command line and
+ximview to access the same copy of the data. Can be combined with
+<kbd>/STRUCTURE</kbd> , in which case the structure IMG tag is a pointer 
+instead of an array.</dd>
+</dl>
+<H1><a name="XIMGO">Ximgo</a></H1>
+<div id="nav">
+<ul>
+  <li><a href="#GO_SYNTAX">Syntax</a>
+  <li><a href="#GO_ARGS">Arguments</a>
+  <li><a href="#GO_KEYS">Keywords</a>    
+</ul>
+</div>
+<p>Ximgo sets the centre of the Ximview display to a specified position, and optionally sets the current mark to that positon.</p>
+<h2 class="API"><a name="GO_SYNTAX">Syntax</a></h2>
+<pre>
+
+ximgo, a0, a1, [a2, a3, a4, a5] [, /PIXELS] [, /MARK]
+</pre>
+<h2 class="API"><a name="GO_ARGS">Arguments</a></h2>
+<dl>
+<dt><kbd>a0, a1</kbd></dt><dd>Position arguments. If only these positional arguments are supplied they are taken as longitude/right ascension and latitude/declination or x and y pixel coordinates (if /PIXEL is set) 
+<dt><kbd>a2, a3, a4, a5</kbd></dt><dd>If present, positions are assumed to be in hexadecimal. If <kbd>a0</kbd>&ndash;<kbd>a3</kbd> are present they are taken as hours and minutes of RA, degrees and minutes of Dec. If <kbd>a0</kbd>&ndash;<kbd>a5</kbd> are supplied they are hours, minutes, seconds, degrees, minutes, seconds.</dd>
+</dl>
+<h2 class="API"><a name="GO_KEYS">Keywords</a></h2>
+<dl>
+<dt><kbd>/PIXELS</kbd></dt><dd>If set, coordinates are specified in pixels relative to (0,0} for the bottom-left pixel. Ignored with a warning if arguments 
+<kbd>a2</kbd>&ndash;<kbd>a5</kbd> are present.</dd>
+<dt><kbd>/MARK</kbd></dt><dd>If set, the new centre point is marked.</dd>
+</dl>
+<H1><a name="XIMCAT">Ximcat</a></H1>
+<div id="nav">
+<ul>
+  <li><a href="#CAT_SYNTAX">Syntax</a>
+  <li><a href="#CAT_ARGS">Arguments</a>
+</ul>
+</div>
+<p>Ximcat loads and plots a catalogue. Catalogue positions are permanently plotted in that they move as the image is dragged, and catalogue positions initial outside the view window will appear when their position comes into view. Catalogue entries not on valid pixels are not plotted. Once loaded, plotting of catalogue positions can be toggled using Analysis -> Catalogue -> On/Off.</p>
+<h2 class="API"><a name="CAT_SYNTAX">Syntax</a></h2>
+<pre>
+
+ximcat, catalog [, coord_sys [, hits]]
+</pre>
+<h2 class="API"><a name="CAT_ARGS">Arguments</a></h2>
+<dl>
+<dt><kbd>catalog</kbd></dt><dd>Structure containing catalogue data, e.g. as read from from a <a href="https://vizier.u-strasbg.fr/viz-bin/VizieR" target="_PARENT">VizieR</a> fits file by the <a href="https://idlastro.gsfc.nasa.gov/homepage.html" target="_PARENT">astrolib</a> routine MRDFITS.</dd>
+<dt><kbd>coord_sys</kbd></dt><dd>HEALPix-style specification of the coordinate system: 'C' = RA/Dec, 'G' Galactic, 'E' = ecliptic (default: 'C')</dd>
+<dt><kbd>hits</kbd></dt><dd>Output: byte array, same length as catalog. Values =1 if catalog entry is on current image an not at a blank pixel, = 0 otherwise.</dd>
+</dl>
+<H1><A name="XIM_CATCH">Xim_catch</a></H1>
+<div id="nav">
+<ul>
+  <li><a href="#CATCH_SYNTAX">Syntax</a>
+  <li><a href="#CATH_ARGS">Arguments</a>
+</ul>
+</div>
+<p>Xim_catch returns Ximview's control structures, and is mainly intended for
+use in applications running as an event loop under Ximview, see <a href="prog.html">programming with ximview</a>. It is also useful for debugging.</p>
+<h2 class="API"><a name="CATCH_SYNTAX">Syntax</a></h2>
+<pre>
+
+xim_catch, top, state, mode
+</pre>
+<h2 class="API"><a name="CATCH_ARGS">Arguments</a></h2>
+<dl>
+<dt><kbd>top</kbd></dt><dd>Widget ID of the ximview widget.</dd>
+<dt><kbd>state</kbd></dt><dd>Main control structure for ximview.</dd>
+<dt><kbd>mode</kbd></dt><dd>Structure specifying current mode.</dd>
+</dl>
+<HR>
+<ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="lutran.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="prog.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,16 @@
+Origin of the icons in this folder:
+
+Icons-mini-file_acrobat.png
+	Mark James  www.famfamfam.com/lab/icons/mini/ (free for all uses)
+External.png:
+        commons.wikipedia.org/wiki/File:External.png  (Gnu Public License v2)
+        See web page for attribution.  
+
+home_24.png:
+        icojoy.com via www.gettyicons.com (free for commercial use; selling
+& ownership claim not allowed).
+
+left_arrow.png, right_arrow.png: 
+        Turbomilk Iconza Light Blue Icons (CC BY 3.0) via www.softicons.com
+
+favicon.ico created using www.favicon.co.uk

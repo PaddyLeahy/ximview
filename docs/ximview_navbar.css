@@ -1,0 +1,28 @@
+a {
+    color: #0055ff;
+    text-decoration: none;
+}
+a:hover {
+    color: #ff0000;
+}
+body {
+    background-color: #fafafa;
+    font-family: Arial, Sans-Serif;
+    font-size: 12px;
+    margin: 0px 0px 0px 3px;
+    padding: 0px;
+}
+img {
+  border: none;
+  vertical-align: bottom;
+}
+ul.nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0px 3px 3px 0px;
+}
+ul.nav li{
+  margin: 0;
+  padding-left: 1em;
+}
+

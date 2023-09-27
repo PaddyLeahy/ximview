@@ -1,0 +1,153 @@
+XIMVIEW Version 0.9.1 beta
+
+The subdirectories in this folder contain the IDL source code for the ximview
+image viewer utility.
+
+See docs/help.txt for a text-based help file, or link to docs/ximview.html
+for a web-help system.
+
+See docs/about.txt for credits.
+
+See install.txt in this directory for installation instructions.
+
+XIMVIEW and associated routines use IDL language features introduced in
+Version 6.0, and should run under any later version.
+
+Contents:
+
++++++++++++++++++++++++++++++++++
+com/
+Routines that interact with Ximview from the IDL command line
+
+xim_catch.pro  Retrieves the control structures for ximview, for debugging
+ximcat.pro     Passes a catalogue of positions to Ximview, which are plotted 
+               over the image
+ximget.pro     Retrieves one of the displayed images as a 2D array
+ximgo.pro      Sets the view centre to a desired position
+
++++++++++++++++++++++++++++++++++
+core/
+The main routines for ximview.
+
+ximview.pro         main program and many subroutines, mostly event handlers
+make_ximview.pro:   constructs the ximview widget
+parse_input.pro     interprets the ximview input data, which can be in many 
+                    formats
+scale_image.pro     scales image into bytes for display
+scaling_params.pro  Estimate image mode and standard deviation
+
++++++++++++++++++++++++++++++++++
+docs/
+Contains the files for the ximview help system, in both html and text format.
+
++++++++++++++++++++++++++++++++++
+event_handlers/
+contains some of the larger event handlers for ximview, extracted from the 
+main program file to allow easier editing.
+
+ximview_blink.pro    Sets up and controls blinking between tabs
+ximview_fitsload.pro Loads fits files interactively
+ximview_imstats.pro  sets parameters for imstats.pro, and feeds data to it
+ximview_maxfit.pro   ditto for maxfit
+ximview_pol.pro      Sets up and loads polarization data for HV or HSV display
+ximview_rdimage.pro  Reads non-fits images in formats known to IDL
+ximview_rgb.pro      Sets up and loads 2 or 3 images as colour planes
+ximview_scale.pro    Provides user control of image scaling
+
++++++++++++++++++++++++++++++++++
+gscroll/
+contains the subroutines of the GSCROLL package, which
+handles the low-level I/O to the TV including panning and zooming.
+
+Most of these routines access the GRID_GSCROLL common block.
+
+Mid-level: Called directly from high-level routines:
+
+gscroll.pro           Main gscroll routine
+gscroll_setup.pro     Initializes GRID_GSCROLL common and creates pixmaps.
+gscroll_tidy.pro      Marks common as closed and deletes pixmaps
+gscroll_addscreen.pro Updates common for a new screen and creates a pixmap 
+                      for it.
+gscroll_newscreen.pro Changes from one screen to a new one. Also deletes
+                      pixmaps if the former screen has been deleted.
+gscroll_refresh.pro   Refreshes the current screen without panning or zooming.
+gscroll_setpar.pro    Sets some parameters in GRID_GSCROLL.
+gscroll_roi.pro       Supposed to draw a region-of-interest overlay over the
+                      current view (not fully debugged)
+                 
+Low-level: only called by above routines:
+
+gscroll_find_panel.pro
+gscroll_load.pro
+cellindex.pro
+
++++++++++++++++++++++++++++++++++
+hpx/
+contains routines concerned with conversion between HEALPix
+pixel list datasets and HEALPix grid images.
+
+Note: hpgrid, hpx2hp_array, and cut4grid can be run as stand-alone utilities
+
+cut4grid.pro       Converts partial-sky pixel lists to images
+grid2hp_index.pro  Converts grid pixel coordinates to pixel list indices
+grid_header.pro    Creates FITS header for grid images
+hp2hpx.pro         Converts healpix pixel numbers to grid pixel coordinates
+hpgrid.pro         Converts full-sky pixel lists to images
+hpx2hp_array.pro   Converts gridded image to pixel list
+hpx2hp.pro         As grid2hp_index, for "GRID" (= HPX) projection only
+set_xy_nest.pro    Utility used in pixel coordinate conversion
+set_xy_ring.pro    Utility used in pixel coordinate conversion
+set_hpi_nest.pro   Utility used in pixel coordinate conversion
+set_hpi_ring.pro   Utility used in pixel coordinate conversion
+set_ring_offsets   Calculates offset of start of each ring in "RING"
+                   ordered pixel lists.
+xph2hp.pro         As grid2hp_index, for "NPOLE" or "SPOLE" (=XPH) projections
+
++++++++++++++++++++++++++++++++++
+utilities/
+Routines used by Ximview but may be more generally applicable.
+
+cubic.pro           Analytic solution to cubic equation
+cursor_grip.pro     Sets cursor to "gripping hand"
+divup.pro           Integer divide rounding up instead of down
+fits_scale.pro      Applies BZERO, BSCALE and BLANK keywords to a FITS image 
+                    stored in integers. Output map is floating-point with blank
+                    pixels set to NaN
+gcirc_arc.pro       Returns the coordinates of a set of points along the great
+                    circle arc connecting two sky positions
+get_jumps.pro       Finds positions along a coordinate line that are interrupted
+                    by the map projection (e.g. at gores, or at RA = 24h).
+get_pixel_area.pro  Estimates solid angle of a pixel given image (x,y) coords 
+                    and an Astrolib astrometry structure
+get_tab_uvals.pro   Returns the uservalues for the tabs associated with a 
+                    widget base as an array.
+get_user_datum.pro  Simple dialog widget to ask for one number
+get_user_item.pro   Simple dialog widget asking user to choose item from list
+grid_labels.pro     Formats coordinate strings for grid lines
+hsv2rgb.pro         Converts Hue-Sat-Value images to Red-Green-Blue 
+                    byte-scaled images. Faster than the intrinsic 
+                    COLOR_CONVERT for large arrays, especially
+                    if the "V" value is already scaled to bytes.
+imstats.pro         Mimics AIPS tasks IMSTATS and TVSTATS: 
+		    gives image statistics in a defined region, including 
+                    integrated flux density.
+linecols.pro        Loads simple colour table suitable for line plots.
+maxfit.pro          Mimics AIPS task MAXFIT: simple peak fitter around a 
+                    given position         
+numunit.pro         Formats (number, unit) pair for printing
+norm_vec            Normalize a vector or vector array
+padstring.pro       pads a string with blanks to get specified justification
+restore_lut.pro     Partner of swap-lut: restores old graphics state
+rotate_transform.pro   Constructs rotation matrix given axis and angle
+set_grid_interval.pro  Chooses interval between grid lines
+set_print_fmt.pro   Constructs format strings for printing brightness values
+                    to ensure no overflows
+simple_colour.pro   Sets first 14 colour indices to values suitable for line 
+                    plots, optionally opens postscript device and sets graphics
+                    parameters to suit.
+smell.pro           Finds smallest ellipse around a set of points
+swap_lut.pro        Saves current graphic state and installs ximview-specific
+		    one (including colour tables)
+string2coord.pro    Converts a string in many formats to a coordinate angle in 
+                    degrees
+

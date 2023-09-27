@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ximview: programming in Ximview</TITLE>
+    <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<DIV id="content">
+<h1>Programming in Ximview</h1>
+It would sometimes be convenient to call Ximview from user program to allow display of new images or analysis of a sequence of images. A direct attempt to do this fails as ximview is designed to run as an unblocked widget in parallel with other IDL processes. Instead, user programs invoking Ximview have to be run within
+the ximview event loop. The basic idea is that the program is initiated from 
+a "Run program" menu option, which prompts the user for the name of the program 
+and initial data. The program then executes a start-up sequence and stores its 
+parameters in a structure, which is returned to ximview. The name of the program and the 
+control structure are saved by ximview. Subsequent interaction is via
+the programmable buttons labelled "A", "B", "C": pressing any of theses calls
+the program with the button label and control structures as arguments. This system is currently under development and so far the available programs are hard-coded under Analysis -> Catalogues -> Process Catalogue.
+<HR>
+<ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="ancillary.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="gripes.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,480 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ximview: Menu Bar Options</TITLE>
+    <link href="ximview.css" rel="stylesheet" type="text/css">
+</HEAD>
+<BODY>
+<div id="content">
+<H1>Menu Bar Options</h1>
+<div id="nav">
+<ul>
+  <li><a href="#FILE">File</a>
+  <li><a href="#DISPLAY">Display</a>
+  <li><a href="#TABS">Tabs</a>
+  <li><a href="#ANALYSIS">Analysis</a>
+  <li><a href="#HEADERS">Headers</a>
+  <li><a href="#HELP">Help</a>
+</ul>
+</div>
+<p>This page describes all the options in the six pull-down menus 
+on the ximview menu bar.</p>
+
+<h2><a name="FILE">File</a></h2>
+<div class="figure">
+<p><img src="images/Load_FITS_Widget.png" alt="Load FITS widget" 
+width="599" height="426">
+<p>The Load FITS widget as it appears for the first image.
+</div>
+<dl>
+<dt><b><a name="FITSLOAD">Load FITS</a></b></dt>
+<dd>Launches a dialog box 
+that allows you to choose a FITS file, specifying
+<ul>
+<li>FITS extension (=0 for Primary Header & Data Unit). 
+<li>Column list (for HEALPix binary tables) or list of 
+<A HREF="details.html#SLICE" target="frame2">slices
+(for N-dimensional cubes)</A>.
+<li>Transfer (choose one of the available <a href="lutran.html#TRANS">transfer functions</a>).
+<li>Whether to <a href="lutran.html#AUTO" target="frame2">auto-scale</a> 
+the data (this affects the displayed
+colours but not the image values themselves). If you select this option
+you can choose to plot the histograms used to find the mode.
+<li>A title for the dataset, used for the plot title and as part of the
+tab label if you are displaying multiple files. Default is "File n" 
+for the nth dataset loaded.
+<li>For HEALPix files you can also specify the pixel order (RING or NESTED) 
+if you want to override the header. For the first file loaded you must
+specify the <a href="details.html#PROJ" target="frame2">HEALPix projection</a> 
+(GRID, NPOLE or SPOLE). You can also tell Ximview to interpret a 2-D image
+as a HEALPix grid projection (the pixel grid must have the correct size),
+which allows seamless scrolling through 180 degrees longitude.
+These parameters are ignored for non-HEALPix data. 
+</ul> 
+If you choose not to autoscale, after the file has been 
+opened, Ximview launches the <a href="#ADJUST">Adjust scaling</a> 
+dialog box.  Enter the range you want, or clear the "range" text box
+to display the full range, and click <b>Accept</b>. If there are several
+columns to load, the dialog will launch again for the next column, and
+so on. To set all images at once to the same scale, click <b>select all</b>, 
+and then accept. Subsets can be selected via the checkboxes.
+</dd>
+<dt><b><a name="LIF">Load image file</a></b></dt>
+<dd>Reads an image file in any of the formats 
+known to IDL, e.g. PNG, BMP, TIFF etc. 
+<strong>Note</strong> as with Load FITS, the image must 
+have the same size as any currently-loaded images. 
+<p><strong>Note</strong>
+the file chooser popup may take an appreciable time to appear, as it
+first checks that all the images in your current directory are in the correct
+format.
+</dd>
+<dt><b><a name="NEWLOG">New logfile</a></b></dt>
+<dd>Starts a new log file. The choices are to: 
+<ul>
+<li> overwrite the old log file
+<li>make a file with a new sequence number, i.e. named 
+ "ximview_<i>n</i>.log" where <i>n</i> is a unique number 
+<li> <b>Named...:</b> you specify a filename via a pop-up box.
+</ul></dd>
+<dt><b><a name="PNG">Write PNG</a></b></dt>
+<dd>Dumps the currently-visible image area and, optionally, scale
+bar to a PNG file. A pop-up requests the file name. 
+<p><strong>Note</strong> under DirectColor the output image will be 
+greyscale.</dd>
+<dt><b><a name="RESET">Reset</a></b></dt>
+<dd>Makes the image window sensitive to cursor 
+motions and re-enables panning, in case either of these have been turned off 
+accidentally.</dd>
+<dt><b><a name="EXIT">Exit</a></b></dt><dd>Ends Ximview.
+</dl>
+<h2><a name="OPTIONS">Options</a></h2>
+<dl>
+<dt><b><a name="MARK">Mark Point</a></b></dt>
+<dd>Sets the action needed to mark a point. Choose from middle mouse button (default), right mouse button, or Shift-click (useful with a Mac mouse or touchpad).</dd>
+<dt><b><a name="ZOOM">Zoom</a></b></dt>
+<dd>Sets the action needed to zoom in or out. Choose from Mouse wheel (default)
+or ctrl-click (for zoom in) and ctrl-shift-click (out). The latter is useful 
+with a Mac mouse or touchpad). The zoom buttons on the main widget can always 
+be used as well.</dd>
+<h2><a name="DISPLAY">Display</a></h2>
+<div class="figure">
+<p><img src="images/Adjust_Scaling_Widget.png" alt="Adjust Scaling widget" 
+width="396" height="487">
+<p>The Adjust Scaling widget as it appears after autoscale has been run.
+</div>
+<dl>
+<dt><b><a name="ADJUST">Adjust Scaling</a></b></dt>
+<dd>Launches a dialog box that allows you to change all the
+scaling options:
+<dl>
+<dt><b> Choose Tabs</b></dt>
+<dd>If there are multiple tabs, check the boxes for the 
+tabs you want to adjust. You can also select or clear them
+all at once. <b>Select all</b> before you hit <b>Accept</b> will give
+identical scaling and colour for all tabs.</dd>
+<dt><b> Make current</b></dt>
+<dd>Check the box for one tab to set the input values (and values for info
+such as the full data range) to those currently set for this tab.</dd>
+<dt><b>Colour table</b></dt>
+<dd>Choose from the list.
+See <a href="#COLTAB">below</a> for comments on each table.</dd>
+<dt><b> Transfer Function</b></dt>
+<dd>Choose from the list of 
+<a href="lutran.html#TRANS" target="frame2">transfer functions</a>.</dd>
+<dt><b> Wrap colour table?</b></dt>
+<dd><dl>
+    <dt><b>No</b></dt>
+    <dd>image intensities outside the range set in 
+      <i>Data range for scaling</i> are displayed
+      as the minimum or maximum colour.</dd>
+    <dt><b>Full</b></dt>
+    <dd> gives a cyclic mapping between image
+      intensity and TV colour: pixels with intensities within the 
+      scaling range are unaffected, 
+      but pixels outside the range map to a (multiply)
+      cycled colour instead of saturating.</dd>
+    <dt><b>Bright end only</b></dt>
+    <dd>as for <b>Full</b> but only for intensities above the maximum of the 
+      scaling range. (Recommended).</dd>
+  </dl>
+</dd> 
+<dt><b>Full data range</b></dt>
+<dd>For information. The units used here are adjusted
+to scale the image maximum intensity into the range
+[10, 10,000) units, e.g. if the peak on the map is
+0.123 K it will be reported as 123. mK. Specify
+the range in the same units (mK in this case).</dd>
+<dt><b> Mode and Estimated rms</b></dt>
+<dd>For information. Same units as the data range.
+These values are only available if 
+<a href="lutran.html#AUTO" target="frame2">auto-scale</a> 
+has been run.</dd>
+<dt><b> Plot histogram on autoscale?</b></dt>
+<dd>If this box is checked before auto-scale is run,
+a histogram of the values around zero is shown with
+the derived mode marked (also the parabolic fit used 
+to derive the mode). This allows you to check that the
+value is sensible.</dd> 
+<dt><b> Data range for scaling</b></dt>
+<dd>Specify the image intensities that map to the 
+faintest and brightest displayed colours (excluding
+wrapping). Use the units in which the full data range is quoted.</dd>
+<dt><b> Beta for Asinh scaling</b></dt>
+<dd>Sets the break between quasi-linear and quasi-
+logarithmic scaling (see <a href="lutran.html#TRANS"  target="frame2">transfer
+functions</a>).</dd>
+<dt><b> Effective zero level</b></dt>
+<dd>Set to your best guess of the image intensity level
+corresponding to true zero. The reported values are
+not altered, but this is used by the Asinh scaling
+function, the red-black-blue colour scale, and
+the <a href="lutran.html#PRESER" target="frame2">preserve colour</a> 
+option for RGB images.</dd>
+<dt><b><a name="ADJUST_AS">Autoscale</a></b></dt>
+<dd>Applies the <a href="lutran.html#AUTO" target="frame2">auto-scale</a> 
+algorithm to the "current"
+image. The other tabs are automatically unselected as
+a reminder that the values returned depend on the 
+particular image. The image is not scaled right away; 
+instead the suggested values of the data range, zero
+level and &beta; are filled in (along with the Full 
+data range, mode, and rms if not previously set). 
+
+<p>Note: this may take a few seconds the first time it
+is run. It is quicker to auto-scale HEALPix maps on 
+input.
+
+<p>The suggested values will be overwritten if you
+make another tab current, but can be recovered 
+instantly by clicking Autoscale a second time.</dd>
+<dt><b>Accept</b></dt>
+<dd>Applies the chosen scaling parameters to the selected tabs.</dd>
+<dt><b>Cancel</b></dt>
+<dd>Don't change any scaling (but the full data range, 
+mode, and rms are recorded if auto-scale has been run).</dd>
+</dl></dd>
+<p>
+<dt><b><a name="ASAT">Auto-scale all tabs</a></b></dt><dd>Each 
+image is auto-scaled. It just goes ahead and applies the
+scaling, there is no request for confirmation.</dd>
+<p> 
+<dt><b><a name="COLTAB">Colour table</a></b></dt>
+<dd>Select your prefered colour table:
+  <dl>
+    <dt><b>Rainbow</b></dt><dd>
+      Default on startup. Garish but gives good 
+      discrimination between levels.
+    </dd>
+    <dt><b>Heat</b></dt><dd>
+      Black-red-orange-white. Rather low contrast
+    </dd>
+    <dt><b>Blue-yellow-white</b></dt><dd>
+      Supposed to be a "colour-blind friendly" scale in
+      that it should look the same to the 5-10% of the 
+      male population with red-green colour-blindness.
+    </dd>
+    <dt><b>Greyscale</b></dt><dd>
+      Actually gives better contrast than "Heat", 
+      especially at low intensities.
+    </dd>
+    <dt><b>Red-black-blue</b></dt><dd>
+      Designed for images where the signal may have either 
+      sign, e.g. Stokes parameters <i>Q</i>, <i>U</i>, and <i>V</i>, velocity 
+      maps, or CMB maps. The intensity that maps to the
+      zero level is set to black, negative intensities
+      are coded red to white, and positive intensities are 
+      coded blue to white. The scaling to white is the
+      same on both sides, so if the range is lopsided, e.g.
+      &minus;1 to 10, only one side will reach white.
+    </dd>
+    <dt><b>Cyclic</b></dt><dd>
+      Constant saturation and intensity and hue cycling
+      through 360&deg;. Suitable for displaying phase
+      or polarization angle.
+  </dd></dl>
+</dd>
+<dt><b><a name="GRD">Grid</a></b></dt>
+<dd> Controls plotting of coordinate grids. One option toggles the plotting on or off, the other allows you to set a particular grid interval for each coordinate.
+The automatic algorithm tries to get 3 to 5 grid lines in view at any one time, so the grid interval will re-set when the zoom is changed, but this is suspended
+when the interval is explicitly set. To restore automatic intervals, set the values to -1. If the FITS header does not conform to the WCS convention, a linear conversion from pixel to world coordinates is assumed. If there is no header information the grid is in pixels.</dd>
+<dt><b><a name="SVC">Set view centre</a></b></dt>
+<dd> Enter the position for the view centre in one of the 
+following systems:
+  <ul>
+    <li>image pixels (x and y pixel coordinates)
+    <li>HEALPix pixel number in either RING or NESTED order.
+    <li>Longitude and latitude, either in degrees (in the sky coordinate system of the image), or in hexadecimal, in which case longitude is taken as being in hours unless explictly specified in degrees. For Hexadecimal numbers, seconds are optional but if given must be present for both coordinates. Thus the following are equivalent:
+<pre>
+              19 59 28.35  40 44 02.1
+              19:59:28.35  40:44:02.1
+              19h59m28.35s 40d44'02.1"
+	     299d52'05.25" 40d44'02.1
+</pre>
+  </ul>
+  The view centre is defined as being the centre of a a pixel. 
+  You get the nearest pixel to the demanded position.</dd>
+<dt><b><a name="RDSS">Restore default screen size</a></b></dt>
+<dd>Returns the Ximview window
+to its initial size (512 &times 512 pixel image window).</dd>
+</dl> 
+
+<h2><a name="TABS">Tabs</a></h2>
+<dl>
+<dt><b><a name="BLINK_SU">Blink Setup</a></b></dt>
+<dd>Launches a dialog box with a checkbox matrix allowing you to
+specify which tab appears at which point in the sequence. 
+The matrix can be cleared with the <b>Clear sequence</b> button.
+
+<p>You can also specific the blink period (per tab, not total)
+in seconds, and choose to omit the scale bar, which can be
+distracting if it differs between images.
+
+<p>Click the <b>Done</b> button to start blinking immediately. 
+Otherwise click <b>Cancel</b>.
+</dd>
+<dt><b><a name="RGB">Red-Green-Blue</a></b></dt>
+<dd>Launches a dialog box with a checkbox matrix allowing you to
+assign any images already loaded to the red, green and blue
+channels of a new image (a new tab is created for it). Two
+colour scaling options are available:
+  <dl>
+    <dt><b>Saturate to white</b></dt>
+    <dd> objects that are saturated (ie displaying the maximum colour value) 
+      in all three channels will display as white. In this case the intensity 
+      scaling for each channel is unchanged when the RGB image is created. 
+      If the scaling of any channel is changed on the original tab, the RGB 
+      image will change to match, but only when the underlying pixmap is 
+      updated, e.g. on a change of zoom or significant panning. In the latter 
+      case the RGB image may be updated in some regions but not others, leading
+      to odd-looking results.</dd>
+    <dt><b>Preserve colour for saturated pixels</b></dt>
+    <dd>uses the SDSS algorithm of Lupton et al. (2004), see 
+      <a href="lutran.html#PRESER" target="frame2">Preserve colour</a>.</dd>
+  </dl>
+</dd>
+<p>
+<div class="figure">
+  <p><img src="images/Polarization_Widget.png" alt="Polarization widget" 
+	  width="372" height="325">
+  <p>The Polarization widget
+</div>
+<dt><b><a name="POL">Polarization</a></b></dt>
+<dd>Options for displaying polarization 
+information based on images already loaded.
+
+<p>At present there is only one option:
+  <dl>
+    <dt><b>Colour</b></dt>
+    <dd>Makes a new tab. A dialog box allows
+      you to select two channels representing one pair of 
+      <ol>
+	<li> Stokes parameters <i>Q</i> and <i>U</i> 
+	<li> Polarized intensity and angle 
+	<li> Fractional polarization and angle. 
+      </ol>
+      In each case you can also choose a third channel representing 
+      total intensity (Stokes <i>I</i>).
+
+      <p>For two channels you get a Hue-Value (HV) image where 
+	hue (colour) represents polarization angle and value 
+	(brightness) represents polarized intensity (or 
+	fractional polarization for option 3).
+
+      <p>For three channels you get a hue-saturation-value 
+	(HSV) plot where hue is angle, saturation is 
+	fractional polarization and value is Stokes I.
+	Saturation is a linear scaling of fractional 
+	polarization from zero to a maximum you set in the 
+	dialog box.
+
+      <p>For both HV and HSV the channel mapped to "value" uses 
+	the same scaling as already set on its original tab,
+	if available. For option (1) HV plots, the value (pol
+	intensity) is calculated on the fly and you get linear
+	scaling from zero to a maximum set in the dialog box.
+    </dd>
+  </dl>
+</p>
+<dt><b><a name="DELTAB">Delete tab</a></b></dt>
+<dd>
+  <dl>
+    <dt><b>Delete current tab</b></dt>
+    <dd>does just that, right away.</dd>
+    <dt><b>Specify</b></dt>
+    <dd> select from a list (includes a cancel option).</dd>
+</dl>
+</dl>
+<h2><a name="ANALYSIS">Analysis</a></h2>
+<dl>
+  <dt><b><a name="IMSTATS_SU">Imstats</a></b></dt>
+  <dd> 
+    <dl>
+      <dt><b>Box</b></dt>
+      <dd>Select to use a square or rectangular box around the marked point 
+	to define the region for statistical analysis (Default).</dd>
+      <dt><b>Region of interest</b></dt>
+      <dd>Select the region to analyse using the IDL <kbd>CW_DEFROI</kbd>
+	routine: options of polygon, point, rectangle and
+	circle. Several such regions can be defined before
+	finishing; the union of all will be used. 
+	<strong>Note</strong> the position readout on the <kbd>CW_DEFROI</kbd> 
+	window is meaningless (but the readout on the Ximview 
+	window works as usual).</dd>
+      <dt><b>Set box size</b></dt>
+      <dd>in pixels. Enter one number for a square box, two for a 
+	rectangle. Default is a square box with area about 121 beam areas, or 33  &times; 33 pixels if no beam is defined in the fits header.</dd>
+     <dt><b>Set threshold</b></dt>
+      <dd>Sets the threshold image value for integrating the area/solid angle of extended sources. Enter the value in the units specified in the prompt, which may not be the original units of the image (e.g. if the image units are Jy but most image pixels are at the mJy level, the units will probably be mJy). If set, Imstats reports the number of pixels within the box or ROI with image values above the threshold, and the corresponding solid angle if there is suitable astrometry information in the FITS header. To unset, enter <kbd>NaN</kbd>.</dd>
+    </dl>
+  </dd>
+  <dt><b><a name="PEAKFIT_SU">Peakfit</a></b></dt>
+  <dd> 
+    <dl>
+      <dt><b>Find extremum</b></dt>
+      <dd>Default. Finds the largest maximum <i>or</i> minimum in the
+	search box.</dd>
+      <dt><b>Find maximum</b></dt>
+      <dd>Does that, ignores minima.</dd>
+      <dt><b>Find minimum</b></dt>
+      <dd>Does that, ignores maxima.</dd>
+      <dt><b>Set box size</b></dt>
+      <dd>Enter size of square box in pixels.</dd>
+    </dl>
+  </dd>
+  <dt><b><a name="PROFILE_SU">Profile Options</a></b></dt>
+  <dd>Pop-up box allows you to set several options for Profile:
+    <ul>
+      <li>Choose between great circle path (available only if WCS is set) or a linear path in pixel space. </li>
+      <li>Plot profile between the last two marked points or between the last marked  point and a new point. If the latter, the potential profile path is plotted continuously as you move the cursor. The profile itself is not plotted until the final point is marked.</li>
+      <li>Distance to extend the profile at each end. This is useful if you want to plot a profile running through a pair of peaks: mark a point near each peak and centre it on the peak using maxfit, then specify an extension of a few beam widths so that the profile shows the full rise and fall on each peak.</li>
+    </ul>
+</dd>
+  <dt><b><a name="CLEAR_LAST">Clear last mark</a></b></dt>  
+  <dd>Unsets the last marked point; the current mark is restored to the last-but one point (if set) and the last-but-one point is restored to the last-but-two
+(if set).</dd>
+  <dt><b><a name="CLEAR">Clear marks</a></b></dt>
+  <dd>Unsets the current marked points and removes the graphics markers.</dd>
+  <dt><b><a name="SIP">Set image properties</a></b></dt>
+  <dd><p>A dialog box allows you to select a tab and inspect and change
+    the values of: polarization, frequency, beam (point spread function) 
+parameters, noise type and brightness unit. For <b>polarization</b> you can choose from a list of possible polarization products. This list is inherited from AIPS and includes some items that are not really polarization, such as spectral index and optical depth. For <b>frequency</b> you can choose from the list of frequencies already loaded, or enter a new value. The value is a text string, e.g. "K band" "408 MHz" etc. The <b>beam parameters</b> assume a Gaussian shape and are the FWHM major axis (BMAJ), FWHM minor axis (BMIN), and position angle (BPA). The <b>noise type</b> options are "independent in each pixel" (e.g. for CCD images), "correlated over the beam" (e.g. for aperture synthesis images), or "unknown".</p>
+    
+<p>The frequency and polarization are used for labelling tabs, and the polarization also sets the default channel assignment for polarization displays. The beam parameters and noise type are used by Imstats to calculate integrated flux densities and errors. <b>Note that</b> the noise type must be explicitly set to allow Imstats to estimate errors in integrated flux densities, as this parameter is not stored in FITS headers.</dd>
+  <dt><b><a name="SET_COORD">Set coordinate system</a></b></dt>
+  <dd><p>A dialog box allows you to assert that the coordinate system is one of the options known to HEALPix, e.g. Equatorial (RA/Dec), Galactic, Ecliptic, etc.
+This is primarily intended for HEALPix images in which the COORDSYS parameter is not supplied in the FITS header. It affects the format of the position readouts on the image and profile windows and the labelling of coordinate grid lines.</dd>
+  <dt><b><a name="CATALOGUE">Catalogue</a></b></dt>
+  <dd><dl>      
+      <dt><b>On/Off</b></dt>
+      <dd>Toggle plotting of any catalogues already loaded.</dd>
+      <dt><b>Load new catalogue</b></dt>
+      <dd>Pops up a box requesting the file name for a catalogue to plot. The file should be a FITS file with the catalogue stored as an extension. The only items in the catalogue used are the positions and primary identifiers. If the file includes Virtual Observatory UCDs (e.g. files from <a href="https://vizier.u-strasbg.fr/viz-bin/VizieR" target="_BLANK">VizierR</a>), the main position and identifier
+columns are used. Otherwise there must be columns labelled "RA", "Dec" and 
+"Name". Positions are automatically converted into the coordinate system being displayed. You are also prompted to choose a symbol to be used for this catalogue,
+and whether or not to plot identifier labels. Multiple catalogues may be plotted at once. Catalogues already held in IDL memory can be plotted using <a href="ancillary.html#XIMCAT">ximcat</a>.</dd>
+      <dt><b>Process catalogue</b></dt>
+      <dd>This is an experimental feature, see <a href="prog.html">programming with Ximview</a>.</dd>
+  </dl></dd>
+  <dt><b><a name="RULER">Ruler</a></b></dt>
+  <dd>Prints the distance between two points, and also the angle of the line on the plot. If the WCS projection is set, the distance is the great-circle distance and the angle is the position angle, PA (anticlockwise from north), otherwise the linear distance, and the angle anticlockwise from the y axis. If the axes are not defined or have different units, the distance is in pixels and an angle is not reported.
+    <dl> 
+      <dt><b>Use marked points</b></dt><dd>Gives the distance between the last two marked points.</dd>
+      <dt><b>Interactive</b></dt><dd>Gives the distance from the last marked point to a new point. The path between the points is plotted until the new point is marked.</dd>
+</dl>
+In both cases the path between the points is plotted at the end, but will disappear when the view is shifted.</dd>    
+  <dt><b><a name="PROTRACTOR">Protractor</a></b></dt>
+  <dd>Prints the angle between the last three marked points, and plots a angle marker. Defining the latest point, as A, the second-last point as B, and the last
+point as C, the angle is PA(B to A) - PA(B to C).<b>TBC!!</b></dd>
+</dl> 
+
+<h2><a name="HEADERS">Headers</a></h2>
+<P>This menu consists of a list of the datasets read in to ximview in the
+current session, labelled by the title parameter given when loading
+(or "File 1" etc), the file name (or "Online Data" if read from the command
+line), and the FITS extension number if relevant. Clicking on any item
+launches a pop-up with its FITS header.</P>
+
+<p>For data stored in FITS extensions, including HEALPix, the stored header
+is modified by including any lines from the primary header that are not
+duplicated in the extension. For HEALPix files, the stored header includes
+the axis descriptors (CTYPE1 etc) of the gridded image, but also the
+column labels (TTYPE1 etc) of the original binary table.</p>
+
+<p>For datasets lacking headers such as on-line arrays or PNG files, 
+ximview creates a basic header internally. For TIFF files, the full TIFF
+header is stored in the FITS header comments.</p>
+
+<p>Any changes made by "Set image properties" and "Set coordinate system" are not reflected in the displayed headers.<p>
+
+
+<h2><a name="HELP">Help</a></h2>
+<dl>
+  <dt><b>Help</b></dt>
+  <dd>Displays this help in various formats depending
+    on the version of IDL in use. You get plain text in IDL versions 
+    before 6.2, HTML help on your browser for version 8, and the IDL Help 
+    Assistant in between.</dd>
+  <dt><b>Release Notes</b></dt>
+  <dd>Displays list of changes for each version of Ximview.</dd>
+  <dt><b>About</b></dt>
+  <dd>Displays Ximview credits.</dd>
+</dl>
+<HR>
+<ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="intro.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="comline.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

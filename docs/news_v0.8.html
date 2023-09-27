@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ximview: What's New in Ximview 0.8</TITLE>
+    <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<div id="content">
+<H1><a name="WHATSNEW">What's New in Ximview 0.8</a></H1>
+
+<p>This release features some significant improvements in usability
+through both new features and better default behaviour. A substantial number
+of bugs have been fixed. This remains a beta release, so please send
+me bug reports, complaints about unsatisfactory features, and requests for
+new features.
+
+<p><a name="HIGHLIGHTS">Highlights</a> include
+<ul>
+<li> Ximview can now be launched without specifying an input dataset, so
+the GUI <a href="menu.html#FILE" target="frame2">file chooser</a> can be 
+used to find the file you want.
+<li> You can zoom in and out using the scroll wheel on your mouse.
+<li> FITS and TIFF headers of datasets can be 
+<a href="menu.html#HEADERS" target="frame2">displayed</a>, and can be returned
+to the IDL command line by <a href="ximget.html" target="frame2">ximget</a>.
+<li> Ximview now <a href="lutran.html#AUTO" target="frame2">auto-scales</a> 
+input datasets by default.
+<li> Colour tables are now independent for each tab, although it is easy
+to choose a uniform colour table and transfer function for all tabs.
+<li> Precisions of positions and image intensities reported by Ximview,
+<a href="intro.html#PEAKFIT" target="frame2">Peakfit</a> and 
+<a href="intro.html#IMSTATS" target="frame2">Imstats</a> are
+now chosen appropriately for the image resolution and dynamic range.
+<li> Right Ascension and Declination are reported in sexagesimal form;
+other coordinate systems are still reported in degrees.
+<li> If a new image is loaded which has no astrometric metadata (e.g. a 
+simple data array from the command line), it is now
+assumed to be properly aligned with the existing images, providing it matches
+in terms of pixel dimensions. Similarly, if
+the first image loaded lacked astrometry, a later image with astrometry
+will be assumed to define the coordinate system. If astrometry is specified
+in more than one dataset, they still must agree.
+<li> Tab labelling has been improved.
+<li> This help system has been updated.
+<li> <b><a href="menu.html#PNG" target="frame2">Write PNG Image</a></b> now 
+gives you the option to leave out the scale bar.
+<li> New <KBD>/STRUCTURE</KBD> and <KBD>/POINTER</KBD> options for
+<code><a href="ximget.html" target="frame2">ximget</a></code>.
+<li><a href="intro.html#IMSTATS" target="frame2">Imstats</a> 
+output format has been improved.
+</ul>
+
+<p><a name="BUGFIX">Major bug fixes</a>:
+<ul>
+<li> Ximview now properly selects columns from IDL structures and reads
+extensions in FITS files which have an image in the primary HDU.
+<li> Autoscale should now work sensibly on any input, including 
+integer and byte values and featureless (flat) images.
+<li> Fluxes and intensities reported by Imstats and Peakfit are now correct;
+formerly they were sometimes in error by powers of 1000.
+<li> The graphics state is now fully insulated from the command line, so
+changing the graphics system variables <KBD>!P, !X, !Y</KBD> no longer affects
+the display of scale bar labels etc. This has fixed a problem under Windows
+where plots intended for the normal IDL plot window sometimes appeared on 
+the Ximview screen instead.
+<li> The Red-Black-Blue colour scale now always aligns black with 
+effective zero intensity as intended: formerly this only worked if the 
+image was explicitly re-scaled.
+<li> Various bugs in the unit parser have been fixed and it now has a more
+thorough go at putting whatever units are found in the FITS header into
+standard form.
+<li> Closing popup windows via the window manager no longer generates (usually
+harmless) error messages, but is equivalent to choosing "Cancel".
+<li> If on-line HEALPix data is supplied in any form (plain
+array, structure, or pointer), bad pixel sentinel values are no longer
+converted to NaNs in the original arrays (unless <KBD>/TEMPORARY</KBD> is
+set, in which case the data may well not be returned at all).
+</ul>
+
+<p>Ximview still lacks a few planned features, so the release number
+is still less than 1.0. The most obvious of these is the ability to overlay
+coordinate grids. Don't expect this anytime soon.
+<HR><ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="intro.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,1181 @@
+Ximview Help
+
+version 0.8 beta
+
+NOTE: A hypertext version of this help file is available in the docs
+subdirectory of your Ximiview directory. Start with docs/home.html.
+
+
+Contents:
+
+* What's New in Ximview 0.8
+* Introduction
+* Menu bar options
+* Command line options
+* More Details
+  - Data exchange with the command line
+  - Image alignment
+  - HEALPix projections
+  - Log file
+  - Crash recovery
+* Colour and scaling
+  - Transfer Functions
+  - Auto-scaling
+  - Preserve-colour option
+* Gripes & FAQs
+* Credits
+
+What's New in Ximview 0.8
+=========================
+
+This release features some significant improvements in usability
+through both new features and better default behaviour. A substantial
+number of bugs have been fixed. This remains a beta release, so please
+send me bug reports, complaints about unsatisfactory features, and
+requests for new features.
+
+Highlights include
+
+ o  Ximview can now be launched without specifying an input dataset,
+    so the GUI file chooser can be used to find the file you want.
+ o  You can zoom in and out using the scroll wheel on your mouse.
+ o  FITS and TIFF headers of datasets can be displayed, and can be
+    returned to the IDL command line by ximget.  
+ o  Ximview now auto-scales input datasets by default.  
+ o  Colour tables are now independent for each tab, although it is easy
+    to choose a uniform colour table and transfer function for all tabs.
+ o  Precisions of positions and image intensities reported by Ximview are 
+    now chosen appropriately for the image resolution and dynamic range. 
+ o  Right Ascension and Declination are reported in sexagesimal form; 
+    other coordinate systems are still reported in degrees.  
+ o  If a new image is loaded which has no astrometric metadata (e.g. a 
+    simple data array from the command line), it is now assumed to be 
+    properly aligned with the existing images, providing it matches in 
+    terms of pixel dimensions. Similarly, if the first image loaded lacked
+    astrometry, a later image with astrometry will be assumed to
+    define the coordinate system. If astrometry is specified in more
+    than one dataset, they still must agree.  
+ o  Tab labelling has been improved.
+ o  The help system has been updated.
+
+Major bug fixes:
+
+ o  Ximview now properly selects columns from IDL structures and reads
+    extensions in FITS files which have an image in the primary HDU.
+ o  Autoscale now works sensibly on any input, including integer and
+    byte values and featureless (flat) images.  
+ o  Fluxes and intensities reported by Imstats and Peakfit are now correct; 
+    formerly they were sometimes in error by powers of 1000.  
+ o  The graphics state is now fully insulated from the command line, so 
+    changing the graphics system variables !P, !X, !Y no longer affects the 
+    display of scale bar labels etc. This has fixed a problem under Windows
+    where plots intended for the normal IDL plot window sometimes
+    appeared on the Ximview screen instead.  
+ o  The Red-Black-Blue colour scale now always aligns black with effective 
+    zero intensity as intended: formerly this only worked if the image was 
+    explicitly re-scaled.  
+ o  Various bugs in the unit parser have been fixed and it now has a more 
+    thorough go at putting whatever units are found in the FITS header into 
+    standard form.  
+ o  Closing popup windows via the window manager no longer generates (usually 
+    harmless) error messages, but is equivalent to choosing "Cancel".
+
+Ximview still lacks a few planned features, so the release number is
+still less than 1.0. The most obvious of these is the ability to
+overlay coordinate grids. Don't expect this anytime soon.
+
+Introduction
+============
+
+Ximview is a utilty intended for quick-look inspection of large images at 
+the level of individual pixels.
+
+Features
+--------
+    Google Maps style panning and zooming
+
+    Blinking between multiple images
+
+    Colour-coded comparison between two or three images
+
+    Polarization displayed using colour for polarization angle, 
+    and optionally saturation for fractional polarization.
+
+    Image statistics from boxes and ROIs (regions of interest).
+
+    Peak fitting.
+
+    Full support for FITS WCS astrometry.
+
+    Full support for HEALPix datasets including CUT4 (pixel-indexed).
+
+    Displays most standard image formats (jpeg, TIFF, PNG etc) as well as 
+    FITS images.
+    
+    Carefully chosen set of colour scales and scaling algorithms designed 
+    to handle the various types of images encountered in astronomy.
+    Efficient handling of large images on X-server displays over broadband 
+    (LAN) network links, not just on single workstations. 
+
+Ximview and associated routines use IDL language features introduced
+in version 6.0, and should run under any later version. The code has
+been tested under Linux, Windows, and MacOS (but needs more thorough
+testing on all platforms).
+
+Ximview is not intended for production of printable or publishable
+graphics. It is rather slow if run over the internet.
+
+
+Getting Started
+---------------
+Although Ximview has a rich set of command-line options, it can be launched from the IDL command line simply by typing its name:
+
+HIDL> ximview
+
+The Ximview menu bar File menu includes options for loading FITS files
+or standard image files. Alternatively, you can load a dataset
+directly from the command line:
+
+HIDL> ximview, stokesIQU
+
+Suppose stokesIQU is an N1 × N2 × 3 array, or an Npix × 3 array where
+Npix is the number of pixels in a full-sky HEALPix image; then the
+three planes are each loaded into a "tab" on the Ximview window. You
+can switch planes either by clicking on the tab label, or by blinking
+between them automatically.
+
+Initially Ximview starts in "overview" mode, in which the entire image
+is displayed scaled to fit into the display window. An outline shows
+the size of the current field of view at a scale of 1 image pixel per
+display pixel (or larger if the image is so small that it all fits on
+the screen). By clicking anywhere on the image with the left mouse
+button, you enter "zoom" mode, centred on that point in the image,
+initially at 1:1 scale.
+
+You can pan and zoom over the images. The position and intensity under
+the cursor are read out continuously at the bottom of the panel (for
+true colour images the R,G,B byte values are read out). For
+floating-point images, bad data is indicated by NaN (Not a
+Number). HEALPix pixel numbers are also given if appropriate. A button
+takes you back to overview mode, and the region currently viewed in
+zoom mode is outlined.
+
+By default, each image plane is independently auto-scaled to show the
+bulk of the image pixels with a linear intensity scaling. Typically,
+the brightest pixels are saturated to white. The scaling can be
+changed with the Adjust Scaling option in the Display menu. If you
+know what you want before you load the data, you can specify an
+intensity range on the command line:
+
+HIDL> ximview, stokesIQU, [-0.1, 20]
+
+This intensity range will be used for all three planes.
+
+Instead of a simple array, you can specify various other kinds of
+input, including a file name or an IDL structure containing header and
+data, as produced by the HEALPix routine READ_FITS_S.
+
+
+Basic operations:
+-----------------
+Pan by dragging the image with mouse button 1
+
+Mark points by clicking mouse button 2 (also prints the pixel details
+on your xterm and in the log file). Only the latest marked point is
+remembered; earlier ones are erased from the display as soon as you
+pan or zoom.
+
+Zoom in or out (by factors of 2) with the mouse scroll wheel or with the
+in and out buttons on the left-hand side. Zoom factors of less than one 
+are handled by decimating the input image (e.g. at zoom 0.5 only every 
+other row and column is displayed). Ximview never changes the actual 
+pixel values, e.g. by interpolating or binning.
+
+Reset the zoom to 1 input pixel to 1 output pixel with the 1:1 button.
+
+Return to overview mode with the overview button. Unlike zoom mode,
+overview mode is not restricted to factor-of-two zooms but chooses an
+integer resampling factor to fill the display as much as possible.
+
+Clicking again enters zoom mode, this time at the last zoom you were
+using.
+
+Resize the window, and the view will adjust to match (within
+reason). You can maximise the window to make the view as big as
+possible.
+
+Along the bottom of the window are buttons for the most useful tasks:
+
+Blink on/off: 
+start or stop blinking through the channels. This is done by copying
+the display on each tab in turn to a new temporary tab.  (Simply
+selecting the tabs directly causes "flashing" which makes subtle
+changes harder to see). You can pan, zoom and swap tabs as normal
+while blinking is in progress, except that panning is not as smooth as
+usual since the blink tab is only updated at the blink rate (twice a
+second by default).
+
+Imstats: 
+gets image statistics in a box surrounding the marked point, or a
+user-defined Region Of Interest (ROI). The region analysed is briefly
+marked on the screen (erased when you pan or zoom).  The ROI option
+uses the IDL routine CW_DEFROI which launches its own dialog
+box. Note: this is usually part-hidden by the main Ximview window when
+it launches.
+
+
+Peakfit: 
+finds the maximum or minimum in a small box around the marked point,
+and fits the 3 × 3 pixels surrounding the local maximum with a
+quadratic to get sub-pixel (but not optimal) accuracy.
+
+Detailed options are set via the menu bar.
+
+
+Menu Bar Options
+================
+
+This page describes all the options in the five pull-down menus on the
+ximview menu bar.
+
+File:
+     Load FITS   Launches a dialog box that allows you to choose a FITS file,
+                 specifying:
+                 * FITS extension (=0 for Primary Header & Data Unit). 
+                 * column list (for HEALPix binary tables) or list of slices 
+                   (for N-dimensional cubes).
+
+Note: all dimensions higher than 2 are collapsed into a single third
+dimension. For instance, if your third and fourth dimensions are
+STOKES (planes 1 to 4 representing I,Q,U,V) and FREQUENCY (100
+channels), then slices 40, 41, 42 would pick up Stokes V for frequency
+channel 10, and Stokes I and Q for frequency channel 11.
+
+                 * Whether to auto-scale the data (this affects the
+                   displayed colours but not the image values
+                   themselves). If you select this option you can
+                   choose to plot the histograms used to find the
+                   mode.
+                 * a title for the dataset, used for the plot title and
+                   as part of the tab label if you are displaying multiple 
+                   files. Default is "File n" for the nth dataset loaded. 
+                 
+                 * For HEALPix files you can also specify the pixel
+                   order (GRID or NESTED) if you want to override the
+                   header. For the first file loaded you must specify
+                   the HEALPix projection (GRID, NPOLE or SPOLE). You
+                   can also tell Ximview to interpret a 2-D image as a
+                   HEALPix grid projection (the pixel grid must have
+                   the correct size), which allows seamless scrolling
+                   through 180 degrees longitude. These parameters are
+                   ignored for non-HEALPix data.
+
+
+		 If you choose not to autoscale, after the file has
+		 been opened, Ximview launches the Adjust scaling
+		 dialog box. Enter the range you want, or clear the
+		 "range" text box to display the full range, and click
+		 Accept. If there are several columns to load, the
+		 dialog will launch again for the next column, and so
+		 on. To set all images at once to the same scale,
+		 click select all, and then accept. Subsets can be
+		 selected via the checkboxes.
+
+     Load image file
+                 Reads an image file in any of the formats known to
+                 IDL, e.g. PNG, BMP etc. NB: as with Load FITS, the
+                 image must have the same size as the currently-loaded
+                 images. Note the file chooser popup may take an
+                 appreciable time to appear, as it first checks that
+                 all the images in your current directory are in the
+                 correct format.
+
+     New logfile Starts a new log file. The choices are to: 
+                 * overwrite the old log file 
+                 * make a file with a new sequence number, i.e. named 
+                   "ximview_<n>.log" where <n> is a unique number
+                 * Named...: you specify a filename via a pop-up box.
+
+     Write PNG   Dumps the currently-visible image area and the scale bar
+                 to a PNG file. 
+                 A pop-up requests the file name. NB under DirectColor the 
+                 output image will be greyscale.
+
+     Reset       Makes the image window sensitive to cursor motions and 
+                 re-enables panning, in case either of these have been 
+                 turned off accidentally.
+
+     Exit        Ends Ximview.
+
+Display:
+     Adjust Scaling: 
+                Launches a dialog box that allows you to change all the
+                scaling options:
+ 
+                     * Choose Tabs: 
+                         If there are multiple tabs, check the boxes
+                         for the tabs you want to adjust. You can also
+                         select or clear them all at once. Select all
+                         before you hit Accept will give identical
+                         scaling and colour for all tabs.
+
+		     * Make current:
+		         Check the box for one tab to set the input
+		         values (and values for info such as the full
+		         data range) to those currently set for this
+		         tab.
+
+                     * Colour table: 
+                         Choose from the list. See below for comments on 
+ 			 each table.
+                         
+                     * Transfer Function:
+                         Choose from the list. See section on transfer 
+                         functions below for a full description.
+
+                     * Wrap colour table? 
+                         "No": image intensities outside the range set
+                               in "Data range for scaling" are
+                               displayed as the minimum or maximum
+                               colour.
+                         "Full": gives a cyclic mapping between image
+                               intensity and TV colour: pixels within
+                               the scaling range are unaffected, but
+                               pixels outside the range map to a
+                               (multiply) cycled colour instead of
+                               saturating.
+                         "Bright end only": applies only to intensities above
+                               the maximum of range. (Recommended).
+                           
+                     * Full data range: 
+                         For information. The units used here are adjusted
+                         to scale the image maximum intensity into the range
+                         [10, 10000] units, e.g. if the peak on the map is
+                         0.123 K it will be reported as 123. mK. Specify
+                         the range in the same units (mK in this case).
+                     
+                     * Mode and Estimated rms:
+                         For information. Same units as the data range.
+                         These values are only available if auto-scale has been
+                         run.
+
+                     * Plot histogram on autoscale?
+                         If this box is checked before auto-scale is run,
+                         a histogram of the values around zero is shown with
+                         the derived mode marked (also the parabolic fit used 
+                         to derive the mode). This allows you to check that the
+                         value is sensible.
+
+                     * Data range for scaling:
+                         Specify the image intensities that map to the 
+                         faintest and brightest displayed colours (excluding
+                         wrapping).
+
+                     * Beta for Asinh scaling:
+                         Sets the break between quasi-linear and quasi-
+                         logarithmic scaling (see section on transfer
+                         functions below).
+
+                     * Effective zero level:
+                         Set to your best guess of the image intensity level
+                         corresponding to true zero. The reported values are
+                         not altered, but this is used by the Asinh scaling
+                         function and, the red-black-blue colour scale, and
+                         the "preserve colour" option for RGB images.
+
+                     * Autoscale:
+                         Applies the auto-scale algorithm to the "current"
+                         image. The other tabs are automatically unselected as
+                         a reminder that the values returned depend on the 
+                         particular image. The image is not scaled right away; 
+                         instead the suggested values of the data range, zero
+                         level and beta are filled in (along with the Full 
+                         data range, mode, and rms if not previously set). 
+
+                         Note: this may take a few seconds the first time it
+                         is run. It is quicker to auto-scale HEALPix maps on 
+                         input.
+
+                         The suggested values will be overwritten if you
+                         make another tab current, but can be recovered 
+                         instantly by clicking Autoscale a second time.
+
+                     * Accept:
+                         Applies the chosen scaling parameters to the selected
+                         tabs.
+
+                     * Cancel:
+                         Don't change any scaling (but the full data range, 
+                         mode, and rms are recorded if auto-scale has been 
+                         run).
+
+     Auto-scale all tabs:
+                Each image is auto-scaled. It just goes ahead and applies the
+                scaling, there is no request for confirmation.
+            
+     Colour table:                    
+                Select your prefered colour table:
+                     * Rainbow: 
+                         Default on startup. Garish but gives good 
+                         discrimination between levels.
+                     * Heat:
+                         Black-red-orange-white. Rather low contrast
+                     * Blue-yellow-white:
+                         Supposed to be a "colour-blind friendly" scale in
+                         that it should look the same to the 5-10% of the 
+                         male population with red-green colour-blindness.
+                     * Greyscale:
+                         Actually gives better contrast than "Heat", 
+                         especially at low intensities.
+                     * Red-black-blue:
+                         Designed for images where the signal may have either 
+                         sign, e.g. Stokes parameters Q, U, and V, velocity 
+                         maps, or CMB maps. The intensity that maps to the
+                         zero level is set to black, negative intensities
+                         are coded red to white, and positive intensities are 
+                         coded blue to white. The scaling to white is the
+                         same on both sides, so if the range is lopsided, e.g.
+                         -1 to 10, only one side will reach white.
+                     * Cyclic:
+                         Constant saturation and intensity and hue cycling
+                         through 360 degrees. Suitable for displaying phase
+                         or polarization angle.
+     
+     Set view centre: 
+                Enter the position for the view centre in one of the 
+                following systems:
+                     * image pixels (x and y pixel coordinates)
+                     * HEALPix pixel number in either RING or NESTED order.
+                     * Latitude and longitude in degrees (in the native
+                       coordinate system of the image).
+                The view centre is defined as being the centre of a a pixel. 
+                You get the nearest pixel to the demanded position.
+                Lat/Long not yet enabled for butterfly projections.
+
+     Restore default screen size
+                Returns the Ximview window to its initial size (512 x 512 
+                pixel image window). 
+
+                     
+Tabs:
+     Blink Setup:
+                Launches a dialog box with a checkbox matrix allowing you to
+                specify which tab appears at which point in the sequence. 
+                The matrix can be cleared with the "clear sequence" button.  
+
+                You can also specific the blink period (per tab, not total)
+                in seconds, and choose to omit the scale bar, which can be
+                distracting if it differs between images.
+
+                Click the "Done" button to start blinking immediately. 
+                Otherwise click "Cancel".
+
+     Red-Green-Blue:
+                Launches a dialog box with a checkbox matrix allowing you to
+                assign any images already loaded to the red, green and blue
+                channels of a new image (a new tab is created for it). Two
+		colour scaling options are available:
+		     * "Saturate to white": objects that are saturated (ie 
+                       displaying the maximum colour value) in all
+                       three channels will display as white. n this
+                       case the intensity scaling for each channel is
+                       unchanged when the RGB image is created. If the
+                       scaling of any channel is changed on the
+                       original tab, the RGB image will change to
+                       match, but only when the underlying pixmap is
+                       updated, e.g. on a change of zoom or
+                       significant panning. In the latter case the RGB
+                       image may be updated in some regions but not
+                       others, leading to odd-looking results.
+                     * "Preserve colour for saturated pixels": uses the 
+                       SDSS algorithm of Lupton et al. (2004),Described
+                       in more detail below.
+
+     Polarization:
+                Options for displaying polarization information based
+                on images already loaded. 
+
+                At present there is only one option:
+
+                     * Colour: Makes a new tab.A dialog box allows you
+                       to select two channels representing one pair of
+                       (i) Stokes parameters Q and U (ii) Polarized
+                       intensity and angle (iii) Fractional
+                       polarization and angle.  In each case you can
+                       also choose a third channel representing total
+                       intensity (Stokes I).
+ 
+                       For two channels you get a Hue-Value (HV) image
+                        where hue (colour) represents polarization
+                        angle and value (brightness) represents
+                        polarized intensity (or fractional
+                        polarization for option iii).  For three
+                        channels you get a hue-saturation-value (HSV)
+                        plot where hue is angle, saturation is
+                        fractional polarization and value is Stokes I.
+                        Saturation is a linear scaling of fractional
+                        polarization from zero to a maximum you set in
+                        the dialog box.  For both HV and HSV the
+                        channel mapped to "value" uses the same
+                        scaling as already set on its original tab, if
+                        available. For option (i) HV plots, the value
+                        (pol intensity) is calculated on the fly and
+                        you get linear scaling from zero to a maximum
+                        set in the dialog box.
+
+     Delete tab:               
+                     * Delete current tab ... does just that, right away.
+                     * Specify            ... select from a list 
+                                              (includes a cancel option).
+
+Analysis:
+     Imstats:
+                     * Box:  
+                         Image statistics will be calculated in a square or 
+                         rectangular box around the marked point (Default)
+                     * Region of interest:
+                         Select the region to analyse using the IDL CW_DEFROI
+                         routine: options of polygon, point, rectangle and
+                         circle. Several such regions can be defined before
+                         finishing; the union of all will be used. 
+                         NB: the position readout on the CW_DEFROI window
+                         is meaningless (but the readout on the Ximview 
+                         window works as usual).
+                     * Set box size:
+                         Enter one number for a square box, two for a 
+                         rectangle.
+
+     Peakfit:
+                     * Find extremum 
+                         Default. Finds the largest maximum OR minimum in the
+                         search box.
+                     * Find maximum
+                         Does that, ignores minima.
+                     * Find minimum
+                         Does that, ignores maxima.
+                     * Set box size:
+                         Enter size of square box in pixels.
+
+     Clear mark:     Unsets the current marked point and removes the graphics
+                     marker.
+
+     Set image properties: A dialog box allows you to select a tab,
+		     see the current value of the property in question, and
+                     set a new value. 
+                     * Polarization: You can choose from a list of possible 
+                       polarization products.
+                     * Frequency: You can choose from the list of frequencies
+                       already loaded, or enter a new value. The value is
+                       a text string, e.g. "K band" "408 MHz" etc.
+                     These items are primarily used for labelling
+                     tabs, but the polarization products also set the
+                     default channel assignment for polarization
+                     displays.
+
+Headers
+
+This menu consists of a list of the datasets read in to ximview in the
+current session, labelled by the title parameter given when loading
+(or "File 1" etc), the file name (or "Online Data" if read from the
+command line), and the FITS extension number if relevant. Clicking on
+any item launches a pop-up with its FITS header.
+
+For data stored in FITS extensions, including HEALPix, the stored
+header is modified by including any lines from the primary header that
+are not duplicated in the extension. For HEALPix files, the stored
+header includes the axis descriptors (CTYPE1 etc) of the gridded
+image, but also the column labels (TTYPE1 etc) of the original binary
+table.
+
+For datasets lacking headers such as on-line arrays or PNG files,
+ximview creates a basic header internally. For TIFF files, the full
+TIFF header is stored in the FITS header comments.
+                   
+Help:
+     Help:           Displays this file, or a hypertext version in IDL
+                     version 6.2 and later.
+     Release Notes:  Displays list of changes for each version of Ximview.
+     About:          Displays Ximview credits.
+
+
+Command line options for Ximview
+================================
+
+Syntax
+------
+ximview [, {Input | /HELP} [, Range  [, {Proj | /NPOLE | /SPOLE} 
+        [, {Order | /RING | /NESTED}]]]] [, COLUMN = col] 
+        [, EXTENSION = ext] [, WRAP = wrap] [, /ROLL] [, NAME = name] 
+        [, LOG = logfile] [, /TEMPORARY]  [, /VERBOSE]
+
+The command XIMVIEW with no arguments launches the ximview GUI, giving
+access to the on-line help and allowing files to be loaded via the
+File menu. All the command line options except /VERBOSE can be
+specified via the GUI interface instead.
+
+Arguments
+---------
+Input can be any of:
+
+* Fits file name (with or without '.fits' or '.FITS' extension). Recognised
+  formats are standard images (in the primary header and data unit or stored
+  as an image extension), all-sky HEALPix arrays stored in binary table 
+  extensions, and "CUT4" format partial-sky HEALPix datasets stored in 
+  binary tables containing a "PIXEL" column, a "SIGNAL" column, and 
+  optionally other columns.
+* on-line HEALPix array, or a multidimensional array one of whose axes
+  has the appropriate length for a HEALPix map. In the latter case
+  each HEALPix map is displayed on a separate tab. 
+* on-line 2-D image or N-D hypercube. The first two dimensions are
+  interpreted as the image dimensions, and each 2-D image slice of the
+  hypercube is displayed on a separate tab.
+* IDL Structure containing header and data (e.g. as produced by the
+  IDL astrolib routine MRDFITS, or the HEALPix routine
+  READ_FITS_S). There may be many data tags containing images, all-sky
+  HEALPix, or CUT4 HEALPix, but each tag must contain only a 2D image
+  or single HEALPix map.
+* IDL pointer to any of the above (also, the structure may contain
+  pointers to the data columns, rather than the data arrays themselves).
+* Array of IDL pointers to maps or HEALPix arrays.
+
+
+Range
+    intensity range to display (excluding wrapped colour tables). If a
+    scalar, specifies the intensity mapped to the top of the colour
+    scale (usually white); the minimum will be the lowest value in the
+    data. If a two-number array, [min, max]. If 'F' or 'Full', use the
+    full intensity range of the data. If omitted the data is
+    auto-scaled. For backwards compatibility, string values of '*',
+    'A' or 'AUTO' also imply
+
+proj = {'GRID', 'NPOLE', 'SPOLE'} defines the projection (or sort
+order) to be used if the input decodes to a HEALPix array. Default is
+'GRID'; /NPOLE and /SPOLE provide shorthands for the other options,
+which are "butterfly" projections centred on the North or South Pole.
+
+order = {'RING', 'NESTED'} or /RING can be used to specify the HEALPix
+pixel order if there is no FITS header available. The default is
+'RING', so /RING is redundant (but present for completeness).
+
+Keywords
+--------
+
+/HELP
+    Prints a brief summary of the command line syntax, and stops. If
+    present, all other inputs are ignored.
+
+/NPOLE, /SPOLE
+    Shortcut specifiers that HEALPix data should be gridded into "butterfly" (XPH) projections centred on the North or South Pole, respectively.
+/NESTED, /RING
+    Shortcuts for the Order argument. /RING is redundant since it is the default, but present for completeness. 
+COLUMN
+    Array specifying the required data selection.
+
+    For HEALPix FITS files, either the column numbers or column names (for instance, WMAP files have column 1 = 'TEMPERATURE' and column 2 = 'N_OBS').
+
+    In CUT4 files, the first column stored is always 'PIXEL', but this is read by default, so COLUMN = 1 refers to 'SIGNAL' and so on.
+
+    For image files containing a stack of images, COLUMN specifies the slice of the stack required. This option only works if the input is a file or structure; if you supply a raw data array, do the subsectioning first, e.g.
+
+
+          HIDL> XIMVIEW, iquv[*,0]
+
+    not
+
+
+          HIDL> XIMVIEW, iquv, COL=0 
+
+    which will generate an error.
+
+EXTENSION
+    the FITS extension to read, or 0 to read from the primary HDU. If
+    not specified, the program looks first in the primary HDU, then in
+    the first extension, then gives up if it cannot find anything
+    interpretable as an image or HEALPix dataset.
+/WRAP
+    Set to give a cyclic mapping between input intensity and TV
+    colour: pixels within the specified intensity range are
+    unaffected, but pixels outside the range map to a (multiply)
+    cycled colour instead of saturating. Set WRAP=-1 to saturate for
+    intensities below the specified range and wrap above it, which is
+    usually preferable.
+/ROLL
+    Set to tell the program to interpret the data as a HEALPix map in
+    'GRID' form and hence allow panning across the 180° to -180°
+    divide. This is set automatically if the program already knows the
+    format from the header, or because it converted the data into
+    'GRID' format itself.
+NAME
+    a label for this dataset, used in the overall title and sometimes
+    in tab labels if several datasets are loaded. Equivalent to the
+    Title option in the Load FITS File Menu option. If not specified,
+    defaults to 'File n' for the nth dataset loaded.
+/LOG
+    Set to create a unique name for the log file (ximview_1.log,
+    ximview_2.log, etc), instead of the usual overwriting of
+    ximview.log. Or set LOG= a name of your choice.
+/TEMPORARY
+    Set to allow the program to overwrite the input data array,
+    thereby saving memory.
+
+/VERBOSE 
+    Set to produce a lot of diagnostic and timing information. This
+also turns on debugging mode, which enables options in the File menu
+to print various internal state variables to the terminal. In the
+unlikely event that ximview crashes, in this mode it stops somewhere
+near the crash point and does not execute the tidy-up
+routines. Instructions for tidying up manually are given below.
+
+More Details
+============
+Data exchange with the command line
+-----------------------------------
+
+If ximview is already running, as well as loading data from files, you
+can transfer data from the IDL command line by simply running Ximview
+again:
+
+HIDL> ximview, new_image, range
+
+new_image can be any of the options available on initial startup, but
+since file I/O is most conveniently done by the Load FITS menu option,
+this is most useful for on-line data. All the command line options are
+available, except for those specifying the HEALPix projection which
+are ignored: the projection always conforms to that for the images
+already loaded.
+
+You can also extract an image from ximview with the ximget function:
+
+HIDL> my_image = ximget('Temp')
+
+The argument specifies which tab to extract.  It is therefore possible
+to load images into Ximview, examine them, extract them to the command
+line and perform further processing (eg take the difference, extract a
+dipole, etc), and re-display the result without the overheads of file
+I/O and conversion from pixel list to grid.
+
+
+Image alignment 
+---------------
+
+Ximview keeps all images aligned, so that when swapping between tabs,
+the same region is displayed in each case. This is only possible if
+the images are all the same size, and if they have coordinate
+information it must be consistent. All images loaded after the initial
+set-up, via the "Load FITS" or "Load image file" menu options or via
+running Ximview again, are checked for agreement and will be rejected
+if there is a serious disagreement. Warnings are issued if the
+coordinates disagrees in that one or other image does not have
+coordinates properly set (including astrometry keywords for
+astronomical images).
+
+
+HEALPix Projections
+-------------------
+HEALPix is not an image format but a way of precisely describing a
+pattern of equal-area pixels on the sphere, with the pixel size
+defined by the Nside parameter (valid values are any power of two),
+with a total of 12 Nside2 pixels over the whole sphere. HEALPix data
+is stored as a one-dimensional list of pixel values, usually in a FITS
+binary table extension. For display purposes the pixel values are
+interpolated or binned into some projection of the sky onto a plane,
+most commonly the Mollweide projection.
+
+Ximview uses one of two related projections that have the property
+that HEALPix pixels appear as squares, so that they can be mapped
+one-to-one onto the display pixels. The default is the "HEALPix grid"
+defined by Calabretta & Roukema (2007), which has FITS World
+Coordinate System code 'HPX'. This is a 5 × Nside square grid with the
+Galactic plane running top-right to bottom-left. You can also choose
+the "butterfly" projections invented by Stuart Lowe and mentioned in
+the same paper, and described more fully in a note by Calabretta &
+Lowe (2013) (70 kB). These have WCS code 'XPH', and occupy a 4 × Nside
+square centred on a pole. The grid and butterfly projections differ
+only in that the four quadrants are rearranged.
+
+Log file
+--------
+Ximview always produces a text logfile containing
+
+*   Program start time
+*   Very basic header info for the data
+*   Pixel data produced by clicking the middle mouse button
+*   Output produced by Imstats and Peakfit.
+
+By default the file is "ximview.log" and is overwritten each time
+ximview is run. The name can be specified by the LOG keyword on the
+command line or the "New logfile" option on the file menu.  If you do
+not have write access to the directory in which you are running
+ximview, it issues a warning message but carries on without writing
+the logfile.
+
+As well as providing a convenient record of the numerical results
+produced by Ximview, if one has marked a series of points their
+coordinates can be read back into IDL for further plotting and
+processing. It is first necessary to close the log file to flush the
+output buffer, which can be done by starting a new logfile from the
+file menu. The file can then be read with READCOL from the IDL
+Astrolib:
+
+HIDL> READCOL, 'ximview.log', x, y, long, lat, flux, zoom
+
+This reads the coordinates into the arrays, x, y etc (choose your
+arguments to match the values listed by ximview, which vary in number
+depending the dataset, e.g. HEALPix or not). READCOL is smart enough
+to ignore the introductory lines in the logfile automatically, as long
+as there are some lines to read with the correct number of numerical
+values.
+
+Crash recovery
+--------------
+Ximview is now pretty stable, but in the unlikely event that it
+crashes without properly exiting, I recommend the following:
+
+If the program stopped in module XIMVIEW, (you must have been running
+in debug mode, i.e. with /VERBOSE set), then before typing RETALL or
+RETURN, try the following:
+
+HIDL> error_status = 1
+HIDL> GOTO, BAIL
+
+Otherwise, if the program returns to MAIN (i.e. the command line), then
+
+HIDL> gscroll_tidy  ; Deletes invisible (PIXMAP) windows.
+
+HIDL> heap_gc       ; Deletes any orphaned heap variables.
+HIDL> close, /all   ; If the crash happened while reading a file
+
+
+XIMGET
+======
+
+ximget returns an image displayed by ximview to the IDL command line.
+
+Syntax:
+
+result = ximget(tab, [header], [,/STRUCTURE]  [,/NO_COPY] [,/POINTER])
+
+Return Value:
+
+If /STRUCTURE is omitted, the return value is the 2-D image displayed
+on the specified tab of ximview. The whole image is returned, not just
+the portion visible within the ximview window. The data type will be
+whatever ximview found in its input. If structure is set, returned
+value is a structure as described below. If pointer is set, instead of
+the image itself you get a pointer to it.
+
+If the tab is displaying an RGB image, the returned array consists of
+8-bit bytes and is a "cube" with its third dimension corresponding to
+R,G,B. If /POINTER is set, an array of three pointers is returned.
+
+Note: bad and off-sky pixels are returned with value NaN (floating
+point values), zero (integer values), or the actual byte values used
+in the display (RGB images).
+
+Arguments:
+
+tab
+    Either a string, specifying the label of the required tab, or an
+integer, giving the tab number, starting at zero for the left-most
+tab.  
+
+header 
+    If specified, on return will be a string array containing the FITS
+header appropriate for the returned image. Unlike the headers
+displayed on the Headers menu, this is specific to the particular tab
+and correctly describes the location of the returned image slice on
+any higher-dimensional axes present in the original FITS file.
+
+Keywords:
+
+/STRUCTURE
+If set, returns an IDL structure with first tag HDR containing the
+FITS header, and second tag IMG containing the image. Note that this
+gives a peak memory load of more than twice the image size, so should
+be avoided if your image is using up a significant fraction of your
+available memory.
+
+/NO_COPY
+If set, the image is transferred rather than copied to save
+memory. Since the image is no longer available to ximview, the target
+tab is deleted. NO_COPY is ignored if /STRUCTURE or /POINTER are set
+(because no memory is saved in those cases), or if there is only one
+tab left.
+
+/POINTER
+
+If set, returns a pointer to the data, which remain stored on the
+heap. This allows both the command line and ximview to access the same
+copy of the data. Can be combined with /STRUCTURE , in which case the
+structure IMG tag is a pointer instead of an array.
+
+Colour and Scaling
+==================
+Transfer Functions
+------------------
+
+The original image data is converted to displayed colour is a
+two-stage process. First the image data scaled into the range [0, 255]
+via a "transfer function", then these values are interpreted as
+colours via the colour table.
+
+The current transfer functions are:
+
+* Linear: Output proportional to (intensity - range minimum)
+
+* Sqrt:   Output proportional to Sqrt(intensity - range minimum)
+          (or zero if argument is negative)
+
+* Asinh:  Output proportional to: 
+
+          Asinh((intensity - zero)/beta) - (Asinh((range min - zero)/beta).
+
+          Zero and beta can be set via the "Adjust Scaling" dialog on the 
+          display menu, or by auto-scaling.  This gives linear scaling for 
+          |intensity| << beta, and logarithmic for |intensity| >> beta. 
+          Choosing beta a few times the noise gives good results. The 
+          default beta is 1 unit, which probably won't work.
+
+* Hist Eq (Histogram equalization). Output is an irregular mapping of the 
+          intensities between range min and range max, chosen to give equal 
+          number of pixels per increment of the output scale.
+
+Asinh scaling is strongly recommended for high dynamic-range images.
+
+
+Auto-scaling
+============
+
+The auto-scaling algorithm aims to scale the image so that
+"noise-like" fluctuations around the zero level are visible but don't
+use up too much of the colour scale, so that bright features are
+visible rather than been completely saturated. The results depend on
+the current colour table and transfer function.
+
+It works in two stages:
+
+Stage 1: Robust estimate of noise and zero level:
+
+This stage may be quite time-consuming for large images, but its
+results are permanently recorded so it is not repeated if you need to
+re-run auto-scale.
+
+Floating-point Not-a-number (NaNs) and infinities are rejected as bad
+data.  If more than 10^-5 of the pixels are exactly zero, it is
+assumed that zero also marks bad data and these are rejected.
+
+A first guess is made by finding the rms and mean of the good
+data. This is used to bins for a histogram, covering +/- 2 sigma
+around the mean, with enough points in each bin to make random
+fluctuations unlikely to change the mode. If the modal bin falls in
+the outer 20% of the histogram, the histogram is re-made with finer
+bins, centred on the mode, and this is iterated if necessary.
+
+The final mode is found by a quadratic fit to the five bins centred on
+the histogram peak. This is our estimate of the true zero level. The
+noise estimate is the one-sided rms below the mode.  if the mode is
+lower than the mean (as it usually is), and above the mode if the mode
+is higher than the mean, indicating significant features at negative
+intensities. (Perfectly legitimate for images of quantities like
+Stokes Q or U).
+
+On request, the histogram and quadratic fit will be plotted in a
+pop-up window if you run auto-scale from the "Adjust scaling" dialog.
+However, for large HEALPix images it is quicker to run auto-scale when
+the data is first loaded, because then there is no need to process the
+large number of "off-sky" pixels which pad out the 2-D projected
+image.
+
+Note This algorithm will fail if the histogram is montonically
+decreasing, e.g. as often occurs in Maximum Entropy (MEM) images.
+
+Stage 2: Choose the range, zero and beta
+
+The estimated zero level is set to the mode. The beta parameter for
+Asinh scaling is current set to 2 sigma (1.5 sigma for the
+red-black-blue colour table).
+
+The image is classified as positive, negative or neutral according to
+whether (max - mode) / (mode - min) is >5, < 0.2, or in between. If
+neutral, the scale is set symmetrically around the mode; if positive
+it runs from mode - 3 sigma to a large positive value, and vice-versa
+for negative images.  The scale is truncated at the actual minimum and
+maximum if this prescription exceeds them. The size of the range is
+chosen according to the colour table in use, such that "noise"
+fluctuations are visible. This varies from a range of 50 sigma for the
+very contrasty "Cyclic" scale to 18 sigma for the "Red-black-blue"
+scale. These values are for linear transfer functions. The ranges are 
+squared for the Sqrt function, and the whole data range is used for
+Asinh. Histogram equalization uses a nominal range of 400 sigma.
+
+
+"Preserve Colour" Option
+========================
+
+The RGB dialog gives you the option of using the algorithm of Lupton
+et al. (2004, PASP, 116, 816) to re-scale the input images to preserve
+"true" colour. With this set, the colour displayed represents the 
+*linear* ratios of the input channels, prior to any transfer function
+scaling. When this option is chosen a second dialog box prompts you to
+choose rescale factors for the three channels and a display range and
+transfer function for the average image. This works as follows:
+
+let T_i be the intensity in colour channel i, z_i be the zero level
+recorded for that channel (via the "Adjust Scaling" dialog), A_i be
+the rescale factors for each channel, and r_1, r_2 be the min and max
+of the range set for the average image. We calculate
+
+(a) Tc_i  = A_i * (T_i - z_i)           (corrected channel image)
+
+   A_i can compensate for different units on different channels or just 
+   rescale channels to get a more interesting-looking result.
+
+(b) T_Av = (1/N_i) Sum_i ( Tc_i )        (Average over colour channels)
+
+(c) F_Av = Transfer_fn(T_Av, r_1, r_2)   (Transformed average image)  
+     
+     (this maps r_1 to zero and r_2 to maximum brightness).
+
+(d) F_i = (Tc_i - r_1) * (F_Av / T_Av)   (Transformed channel image)
+
+F_i are used as the colour channels for the R-G-B image. They also
+replace the displayed images on the original tabs (and look very
+odd). The point is that the F_i have essentially the same ratio as
+Tc_i (exactly so, if r_1 = 0), despite the possibly non-linear scaling
+of the total intensity.  Even when F_Av is saturated at the maximum
+value, the F_i preserve the "true" colour. Note: the overall scale is
+adjusted so that the maximum F_i over all channels is equal to the
+maximum colour intensity. This tends to give rather dim images
+compared to the alternative, the "saturate to white" option.
+
+The grey levels encoding off-sky and bad pixels are also preserved
+(bad pixels in any channel make that pixel bad in all channels).
+
+The original tabs can be restored via the "Adjust scaling" dialog, but
+then the RGB image will revert to the standard "saturate to white".
+
+Gripes and FAQs for Ximview
+===========================
+
+I viewed my image in Ximview and now all the HEALPix bad data values
+have turned into NaNs!
+
+Yes, this always happens with online datasets. Ximview follows the
+FITS standard (687 kB, see Sect 5.3) in using IEEE NaN values as
+markers for bad data, which has many convenient features, for instance
+images can safely be manipulated mathematically without converting bad
+data into "good" data with very silly values, and the bad points can
+be simply found using IDL's FINITE function, and excluded from most
+statistical operations using the /NAN keyword. HEALPix sentinal values
+(=-1.6375E+30) are overwritten with NaNs in the input dataset to avoid
+the memory overheads of making a copy. In general it is quite safe to
+use this revised dataset with other HEALPix commands such as Mollview:
+there is no need to restore the sentinal value. If for some reason you
+do need to put them back, use:
+
+
+HIDL> data[WHERE(~FINITE(data))] = -1.6375E30 ; or D30 if data is
+DOUBLE.
+                ---------------------------
+
+My cursor is well outside the image, but the readout is still listing
+valid fluxes!
+
+This is more of a feature than a bug. When the cursor is positioned
+outside the image, the position reported is the nearest pixel on the
+edge of the image. Let me know if this really bothers you. Notice that
+when the cursor is in the image, but within a 'gore', i.e. a gap in
+the map projection, ximview correctly reports 'no sky pixel'.  
+                ---------------------------
+        
+I'm trying to scroll but the image is a jumble of mismatched square panels!
+
+This is what you get when you push ximview with some combination of a
+very large image and a slow client-server connection. Then ximview may
+not finish updating the view before returning, so you see the
+underlying workings which are usually hidden. The mismatched panels
+will be progressively filled in with correct data when you pan the
+view (slowly!) a bit more, and/or simply wait for a few seconds.  
+                ---------------------------
+
+I notice that the cursor briefly changes into a hand icon when I finish
+dragging. Why is that?
+
+This is a Microsoft Windows peculiarity. You are supposed to get the
+gripping hand cursor when you drag, but under Windows the cursor is
+not updated until you release the mouse button…at which point dragging
+has stopped, of course. I would be grateful if someone could tell me a
+workaround.  
+                ---------------------------
+
+My images are all greyscale!
+
+This can happen under linux if your visual class is not set to
+TrueColor. To fix, at IDL startup, before running Ximview or any other
+graphics applications, set:
+
+
+HIDL> DEVICE, TRUE=24
+
+This is now the default, but for IDL v6 and earlier the default was
+DirectColor. Ximview originally made some attempt to work with
+DirectColor, although this reassigns the colours for every element on
+your screen when the cursor is in the Ximview window. This no longer
+works, but if you really want to run Ximview with DirectColor, try
+disabling the RESTORE_LUT procedure (in the ximview source directory)
+and let me know what happens (this will unfortunately break the
+isolation between Ximview and standard IDL graphics). Similar remarks
+apply to the even older PseudoColor visual.  
+                ---------------------------
+
+Ximview's terminal output formatting is terrible!
+
+It looks really bad if your output window uses a variable width font,
+which was the default for IDL v6 under Microsoft windows. I suggest
+you change to a fixed-width font, e.g. via File -> Preferences. (This
+also makes IDL's own error messages more comprehensible).  
+                ---------------------------
+
+When will Ximview allow me to change the projection of the map?
+
+Never. Ximview is designed to allow you to inspect the map "as is", so
+it strictly adheres to the policy that one image pixel corresponds to
+one displayed pixel (or one square of displayed pixels if
+zoomed-in). That is why it uses the apparently-awkward "HEALPix"
+projections for HEALPix datasets.  
+                ---------------------------
+When will Ximview annotate its images with tick-marks and/or grid lines?
+
+Coordinate graticules are a high priority for inclusion, but also
+non-trivial to accomplish for a scrolling interface. Tick-marks around
+the edges would use up too much screen real estate and therefore are
+unlikely to be implemented (ximview is not intended to be used to make
+publication-quality plots).  
+                ---------------------------
+Ximview is not good at handling cubes with more than a handful of 
+channels, can't you do better?
+
+A ds9-like frequency slider for spectral cubes is on the wish list,
+but don't hold your breath.
+
+
+Credits
+=======
+
+Ximview was mostly written during a sabbatical visit to the
+Osservatorio Astronomico di Trieste in 2007-08. I would like to thank
+the staff there for hosting me, as well as the University of
+Manchester for granting me leave.
+
+Ximview has been significantly influenced by Google Maps, SAO Image
+DS9, Aaron Barth's ATV (especially the Asinh scaling), and NRAO's AIPS
+(for Imstats and Peakfit). It makes essential use of the HEALPix IDL
+library, and NASA's IDL Astrolib, especially the World Coordinates
+System library and several FITS I/O packages.
+
+I would like to thank Tess Jaffe, Sam Leitch, Tony Banday, Stuart
+Lowe, Eric Hivon, Rachana Batawdekar and Indy Leclercq for testing,
+bug reports, and suggestions.
+
+Thanks also to David Fanning for his invaluable website on IDL, and
+practical suggestions via comp.lang.idl-pvwave.

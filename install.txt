@@ -1,0 +1,32 @@
+Ximview Installation Instructions
+
+To run Ximview you need:
+
+1. IDL, a commercial package available from NV5 Geospatial: 
+   see https://www.nv5geospatialsoftware.com/Products/IDL
+   Almost all Ximview code is compatible with IDL v6.0 and later; however
+   the aperture photometry routine requires v8.0 or later.
+
+   GDL, a free clone of IDL is being developed: see 
+   https://gnudatalanguage.github.io/index.html, but is not quite ready to run 
+   Ximview.
+
+2. The HEALPix IDL library. This is available under the GNU Public License
+   as part of the HEALPix software collection, see:
+   http://healpix.jpl.nasa.gov/index.shtml.
+
+   Only the programs in the src/idl/ subdirectory of the HEALPix installation
+   are required.
+
+3. The IDLAstro library, formerly maintained by Goddard Space Flight Centre, 
+   now at https://github.com/wlandsman/IDLAstro
+
+4. Coyote library http://www.idlcoyote.com/documents/programs.php
+   (in fact only the routine cgERRORMSG is needed, which is called by some 
+   IDLAstro routines; but a decent IDL installation will include the full 
+   Coyote library) 	
+
+No compilation is necessary, you only have to ensure that the XIMVIEW,
+HEALPix, IDLAstro, and Coyote directories are included in your IDL path, 
+ideally with XIMVIEW occurring first.
+ 

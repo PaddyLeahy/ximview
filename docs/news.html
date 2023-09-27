@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ximview: What's New</TITLE>
+    <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<div id="content">
+<H1><a name="WHATSNEW">What's New in Ximview 0.9.1</a></H1>
+
+<p><a name="HIGHLIGHTS">Highlights</a> include
+<ul>
+<li> Coordinate grid lines are enabled.
+<li> A profile tool plots an intensity profile along a line through the image.
+<li> Ruler and protractor tools measure distances and angles betwen the last two and last three marked points, respectively.
+<li> The last three marked points remain visible as the display is scrolled, with distinct symbols.
+<li> Analysis tools output result structures which can be picked up and processed in IDL outside of Ximview.
+<li> Imstats now provides background-subtracted photometry in ROI mode: it defines an elliptical background annulus around the ROI, which is used to define the background level and also the local rms fluctuations. Imstats now outputs the number of pixels and solid angle above a give intensity threshold, if set. It also outputs the MAD (median absolute deviation), along with other statistics.
+<li> The default box size for Imstats is now set to about 121 beam areas, if the beam is specified in the FITS header. If not it remains at 33 x 33 pixels.
+<li> The Load FITS dialog now allows you to choose the initial transfer function.
+<li> The Asinh transfer function can be selected on the command line by specifying three elements in the RANGE option, the third being the beta parameter which controls the shift from linear to logarithmic scaling.
+<li> Ximview no longer has to be shut down and re-started if you want to view an image not aligned with the previous one, if you specify the /OVERWRITE command-line option.
+<li> Some tools have been provided to allow ximview to be integrated into user code including IDL commands ximgo to set the centre of the field, ximcat to
+plot positions of objects in a catalogue, and xim_catch, to grab the ximview control structures. In addition, a set of programmable buttons have been provided
+which are intended to interact with a user-specified program. At present these
+are hard-coded to routines which allow the user to inspect and analyse a sequence of objects in a catalogue.
+<li> The "Set view centre" option now accepts positions specified in hexadecimal notation.
+<li> Some information messages which used to be printed on the terminal are now presented as pop-up dialogs, to make them more obvious to the user. 
+<li> A new !ximview_expert system parameter, if set, suppresses a few of the more routine pop-ups.
+<li> Some options to customise the user interface have been provided, in particular to allow Ximview to work with only one "mouse" button.
+</ul>
+
+<p><a name="BUGFIX">Bug fixes</a>:
+<ul>
+<li>Many formatting issues have been tidied up, in particular, the values reported in the Display -> Adjust scaling dialog should no longer overflow, and eccentric units like "10^-3 x 10^3 counts" should no longer appear.
+<li> The ximview widget should now properly re-size to fit screens so small that the default 512-pixel square image window cannot be fit in, provided the image window does not drop below 256 pixels in either dimension.
+<li> Aborting a file load previously broke the insulation between the Ximview graphics state and the the command line, leading to plots from the command line appearing in the ximview window, wrong colour scales, etc. This leak has been plugged.
+</ul>
+
+<p>Ximview still lacks a few planned features, notably Virtual Observatory
+access, so the release number is still less than 1.0.
+<HR>
+<a href="news_v0.8.html">What was new in Ximview 0.8</A>
+<HR><ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="intro.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+    <TITLE>Ximview: Introduction</TITLE>
+    <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<DIV id="content">
+<H1>Introduction to Ximview</H1>
+<div id="nav">
+  <ul>
+    <li><a href="#SIMPLE_USE">Getting started</a>
+    <li><a href="#BASIC">Basic Operations</a>
+    <li><a href="#REQS">Requirements and limitations</a>
+  </ul>
+</div>
+
+<h2><A NAME="SIMPLE_USE">Getting started</A></h2>
+
+Although Ximview has a rich set of 
+<a href="comline.html" target="frame2">command-line
+options</a>, it can be launched from the IDL command line simply by
+typing its name:
+<pre>
+
+HIDL> ximview
+
+</pre>
+The Ximview <a href="menu.html" target="frame2">menu bar</a> File menu
+includes options for loading FITS files or standard image files. 
+Alternatively, you can load a dataset directly from the IDL command line.
+Suppose you have a variable <kbd>stokesIQU</kbd>, which is 
+an N1  &times; N2 &times; 3 array, or an
+N<sub>pix</sub> &times; 3 array where N<sub>pix</sub> is the number
+of pixels in a full-sky HEALPix image; then 
+<pre>
+
+HIDL> ximview, stokesIQU
+
+</pre>
+will load each of the three
+planes into a "tab" on the Ximview window. 
+You can switch planes either by clicking on the tab label, or by 
+blinking between them automatically.
+
+<p>Initially Ximview starts in 
+<dfn><a name="OVERVIEW">overview mode</a></dfn>, 
+in which the entire image
+is displayed scaled to fit into the display window. An outline shows
+the size of the current field of view at a scale of 1 image pixel
+per display pixel (or larger if the image is so small that it all fits
+on the screen). By clicking anywhere on the image with the left mouse 
+button, you enter <dfn><a name="ZOOM_MODE">zoom mode</a></dfn>, centred on
+that point in the image, initially at 1:1 scale.
+
+<p>You can pan and zoom over the images. The position
+and intensity under the cursor are read out continuously at the bottom
+of the panel (for true colour images the R,G,B byte values
+are read out). For floating-point images, bad data is indicated by NaN
+(Not a Number). HEALPix pixel numbers are also given for HEALPix datasets. 
+A button takes you back to overview mode, and the region currently viewed in zoom
+mode is outlined. 
+
+<p> By default, each image plane is independently 
+<a href="lutran.html#AUTO" target="frame2">auto-scaled</a> to show the 
+bulk of the
+image pixels with a linear intensity scaling. Typically, the brightest
+pixels are saturated to white. The scaling can be changed with the
+Adjust Scaling option in the 
+<a href="menu.html#DISPLAY" target="frame2">Display</a>
+menu. If you know what you want before you load the data, you can specify
+an intensity range on the command line:
+<pre>
+
+HIDL> ximview, stokesIQU, [-0.1, 20]
+
+</pre>
+This intensity range will be used for all three planes. For a larger dynamic range try:
+<pre>
+
+HIDL> ximview, stokesIQU, [-0.1, 300, 0.7]
+
+</pre>
+This gives an Asinh <a href="lutran.html#TRANS" target="frame2">transfer function</a>, where the 
+third number sets the intensity around which the scaling shifts smoothly from 
+linear to logarithmic.
+<p>Instead of a simple array, you can specify 
+<a href="comline.html#INPUT"  target="frame2">various other</a> kinds of input,
+including a file name or an IDL structure containing header and data, as 
+produced by the HEALPix routine <code>READ_FITS_S</code>.
+
+
+
+<h2><a name="BASIC">Basic operations</a></h2>
+<dl>
+<dt><b><a name="PAN">Pan</a></b></dt><dd>by dragging the image with 
+mouse button 1.</dd>
+<dt><b><a name="MARK">Mark points</a></b></dt><dd>by clicking mouse button 2 
+(also prints the pixel details on your xterm and in the log file). Only
+the latest three marked points are remembered; earlier ones are erased from the
+display as soon as you pan or zoom. The second-last and third-last markers are progressively fainter.</dd>
+<dt><b><a name="ZOOM">Zoom in or out</a></b></dt><dd>(by factors of 2) 
+with the mouse scroll wheel or with the <b>in</b> and <b>out</b> buttons on 
+the left-hand side. Zoom factors of less than one are handled by decimating
+the input image (e.g. at zoom 0.5 only every other row and column is
+displayed). Ximview never changes the actual pixel values, e.g. by 
+interpolating or binning.</dd>
+<dt><b>Reset the zoom</b></dt><dd>to 1 input pixel to 1 output pixel with 
+the <b>1:1</b> button.</dd>
+<dt><b><a name="OV_BUTTON">Return to overview mode</a></b></b></dt>
+<dd>with the <b>Overview</b> button.
+Unlike zoom mode, overview mode is not restricted to factor-of-two zooms but
+chooses an integer resampling factor to fill the display as 
+much as possible.</p>
+<p>Clicking again in the image window re-enters zoom mode, this time at the 
+last zoom you were using.</dd>
+<dt><b>Change tabs</b></dt><dd>by clicking on the tab label</dd>
+<dt><b><a name="RESIZE">Resize the window</a></b></dt><dd> and the view will adjust to match (within
+reason). You can maximise the window to make the view as big as possible.</dd>
+</dl>
+Along the bottom of the window are buttons for the most useful tasks:
+
+<dl COMPACT>
+<dt><b><a name="BLINK">Blink on/off</a>:</b></dt><dd>start or stop blinking through the channels. 
+This is done by copying the display on each tab in turn to a new temporary tab.
+(Simply selecting the tabs directly causes "flashing" which
+makes subtle changes harder to see). You can pan, zoom and swap tabs as normal
+while blinking is in progress, except that panning is not as smooth as usual
+since the blink tab is only updated at the blink rate (twice a second by
+default).</dd>
+
+<dt><b><a name="IMSTATS">Imstats</a>:</b></dt><dd>
+<p>gets image statistics in a box surrounding the marked point,
+or a user-defined Region Of Interest (ROI). The region analysed
+is briefly marked on the screen (erased when you pan or zoom).</p>
+
+<p>The ROI option uses the IDL routine <code>CW_DEFROI</code> which launches 
+its own dialog box. <strong>Note</strong> 
+this is usually part-hidden by the main Ximview 
+window when it launches.</p>
+
+<p>The ROI mode is intended for photometry of extended objects. Hence, it defines and plots an elliptical background annulus around the ROI (inner ellipse is the smallest that encloses all the ROI pixels; outer ellipse is chosen to make the background annulus the same area as the ROI. The background level and rms are determined using a 3-sigma clip to reject (most of) any sources in the background region. Imstats also reports errors on the integrated flux, based on the standard deviation measured in the background annulus. To do this it needs to know whether the noise is independent in each pixel or correlated over a beam. This has to be set manually using the Analysis -> Set image properties dialog, since it cannot usually be 
+determined from the FITS header; if not set, no errors are reported.</p></dd>
+
+<dt><b><a name="PEAKFIT">Peakfit</a>:</b></dt><dd>
+finds the maximum or minimum in a small box around the marked point, and
+fits the 3 &times; 3 pixels surrounding the local maximum with a quadratic
+to get sub-pixel (but not optimal) accuracy. If the astrometric projection
+is set (it always is for HEALPix maps), the fitting is done using the sky 
+coordinates of each pixel, so even large distortions in the projection 
+should not bias the fit.</dd>
+</dl>
+<dt><b><a name="PROFILE">Profile</a>:</b></dt><dd>
+Launches a widget showing a 1-D plot of the image values along a line between
+the last two marked points. The profile is presented as a step-plot showing the pixel value at each point along the line, rather than an interpolated value. A readout under the plot gives the position and map value under the cursor. There are buttons to save a the plot as a postscript file or to save the plot data in an IDL save file.</dd>
+<p>Imstats and Peakfit print their output to the terminal and also to Ximview's log file. Imstats, Peakfit and Profile also store structures containing all
+their results which can be recovered to the command line via the <kbd>xim_result</kbd> program, until overwritten by another image analysis operation. Detailed options for each of these are set via the <a href="menu.html"  target="frame2">menu 
+bar</a>.</p>
+
+<H2><a name="REQS">Requirements and limitations</a></H2>
+
+<P>Ximview and associated routines use IDL language features introduced
+in version 6.0, and should run under any later version. The code 
+has been tested under Linux, Windows, and MacOS (but 
+needs more thorough testing on all platforms).</p>
+
+<P>The maximum dataset size that ximview can handle is set by your system
+memory.
+
+<p>Ximview is not intended for production of
+printable or publishable graphics. Although it works very well when
+client (machine running IDL) and server (X-window display) are connected over
+a LAN link, it is usually rather slow over an internet connection.</p>
+
+<HR><ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="news.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="menu.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>

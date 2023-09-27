@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML>
+<HEAD>
+  <TITLE>Ximview: Details</TITLE>
+  <link href="ximview.css" rel ="stylesheet" type="text/css">
+</HEAD>
+<BODY >
+<DIV id="content">
+<H1>Ximview procedure details</H1>
+
+<div id=nav>
+<ul>
+  <LI> <a href="#EXCHANGE">Data exchange with 
+      the command line</a>
+  <LI> <a href="#SLICE">Slices of multi-dimensional images</a>
+  <LI> <a href="#ALIGN">Image alignment</a>
+  <LI> <a href="#PROJ">HEALPix Projections</a>
+  <LI> <a href="#LOG">Log file</a>
+  <LI> <a href="#CRASH">Crash Recovery</a>
+</ul>
+</div>
+<p>This page explains how to exploit some of the less obvious features of 
+ximview.
+
+<h2><a name="EXCHANGE">Data exchange with the command line</a></h2>
+
+<p>If ximview is already running, as well as loading data from files, you
+can transfer an image from the IDL command line to a new tab
+by simply running ximview again:
+<pre>
+
+HIDL> ximview, new_image, range</kbd>
+
+</pre>
+<p><kbd>new_image</kbd> can be any of the input options available on 
+initial startup, but
+since file I/O is most conveniently done by the Load FITS menu option,
+this is most useful for on-line data. All the 
+<a href="comline.html">command line options</a> are available. However, unless <kbd>/OVERWRITE</kbd> is set, the options specifying the HEALPix projection are ignored, and the projection will conform to that for the images already loaded.
+
+<p>You can also extract an image from ximview with the 
+<code><a href="ximget.html">ximget</a></code> function:
+<pre>
+
+HIDL> image = ximget('Temp')
+
+</pre>
+<p>The argument specifies which tab to extract. 
+It is therefore possible to load images into Ximview, examine them,
+extract them to the command line and perform further processing (e.g.
+take the difference, extract a dipole, etc), and re-display the result
+without the overheads of file I/O and conversion from pixel list to
+grid.</p>
+
+<h2><a name="SLICE">Slices of multi-dimensional images</A></H2>
+<p>If your dataset is an image with more than two dimensions, you can 
+load a subset of the image slices using the 
+<KBD><a href="comline.html#COLUMN" target="frame2">COLUMN</A></KBD> keyword on
+the command line, or the equivalent "Columns/Slices" box in the 
+<b><a href="menu.html#FITSLOAD" target="frame2">Load FITS</a></b> dialog box.
+
+<p>The numbering starts from 1 for the first slice (i.e. FITS-style rather than
+IDL-style), and all dimensions higher than 2 are collapsed into a
+single third dimension. For instance, if your third and fourth dimensions 
+are STOKES (planes 1 to 4 representing I,Q,U,V) and FREQUENCY (100 channels),
+then slices 40, 41, 42 would pick up Stokes V for frequency channel 10, 
+and Stokes I and Q for frequency channel 11.
+
+<p>Ximview selects slices from multi-dimensional arrays of HEALPix datasets 
+in a similar
+way; the only difference is that dimensions higher than 1 are collapsed, since
+a HEALPix "map" is stored in a one-dimensional array.
+
+<h2><a name="ALIGN">Image alignment</A></h2>
+
+<p>Ximview keeps all images aligned, so that when swapping between tabs,
+the same region is displayed in each case. This is only possible if
+the images are all the same size, and if they have coordinate
+information it must be consistent. All images loaded after the initial
+set-up, via <b>Load FITS</b> or <b>Load image file</b> on
+the <a href="menu.html#FILE">file menu</a> or via 
+<a href="exchange.html">running ximview again</a>, 
+are checked for agreement and will be rejected if there is a
+serious disagreement. Warnings are issued if the coordinates disagrees
+in that one or other image does not have coordinates properly set
+(including astrometry keywords for astronomical images). <b>Exception:</b> if only one tab is displayed, it can be replaced with all these checks ignored if <kbd>/OVERWRITE</kbd> is set on the command line.</p>
+
+<h2><a name="PROJ">HEALPix Projections</a></h2>
+<div class="figure">
+  <p><img src="images/Planck_217GHz_moll_lin.png" alt="Map projection with
+          elliptical outline, Galactic plane along major axis" 
+	      width="400" height="250">
+  <p>All-sky map displayed in the Mollweide projection
+</div>
+<p>HEALPix is not an image format but a way of precisely 
+describing a pattern of equal-area pixels on the sphere, with the
+pixel size defined by the N<sub>side</sub> parameter (valid values are
+any power of two), with a total of 12 N<sub>side</sub><sup>2</sup> pixels
+over the whole sphere. HEALPix data is stored as a one-dimensional list
+of pixel values, usually in a FITS binary table extension. For display
+purposes the pixel values are interpolated or binned into some projection
+of the sky onto a plane, most commonly the Mollweide projection, as shown
+at right.</p>
+<div class="spacer"> </div>
+<div class="figure">
+  <p><img src="images/Planck_217GHz_lin_grid.png" alt="Map projection with 
+          zig-zag outline, Galactic plane along diagonal" 
+	  width="394" height="419">
+  <p>All-sky map displayed in the Healpix grid projection. 
+</div>
+<p>Ximview uses one of two related projections that turn
+the diamond-shaped HEALPix pixels into squares, so that they can be 
+mapped one-to-one
+onto the display pixels. The default, "GRID", is the HEALPix projection 
+defined by 
+<a href="http://adsabs.harvard.edu/abs/2007MNRAS.381..865C" target="_TOP">
+Calabretta & Roukema (2007)</a>, which has FITS World Coordinate System 
+code 'HPX'. This is a 5 &times; N<sub>side</sub> square grid with the 
+zero of latitude running diagonally from top-right to bottom-left. 
+When data is loaded in this
+format, you can pan seamlessly around the sky: moving through the top-right
+of the map automatically brings you back to the bottom left. This projection
+is relatively inefficient in data storage: of the 25 squares only 13 are
+occupied and this includes one that is duplicated at top right and bottom
+left. This is the default HEALPix projection for ximview.</p> 
+<div class="spacer"></div>
+<div class="figure">
+  <p><img src="images/Planck_217GHz_lin_npole.png" alt="Map projection
+      in the form of an X, Galactic plane bisecting each arm"
+	  width="373" height="396">
+  <p>All-sky map displayed in the Healpix butterfly projection.
+The square shows a 512 &times; 512 pixel field of view.
+</div>
+<p>You can also choose the "butterfly" projections invented by Stuart Lowe
+and mentioned in the same paper, and described more fully in a note
+by <a href="http://www.atnf.csiro.au/people/mcalabre/WCS/XPH.pdf"  
+      class="pdf" target="_TOP">Calabretta & Lowe (2013)</a> (70 kB). 
+These have WCS code 'XPH', and occupy a 4 &times; N<sub>side</sub> 
+square centred on a pole. Select with "NPOLE" for the north pole and
+"SPOLE" for the south pole. The grid and butterfly projections differ 
+only in that the four quadrants are rearranged. The butterfly projection is
+more efficient for data storage as 3/4 of the area is occupied by sky pixels,
+with no repeats. This will be important if your image sizes approach the 
+available memory in IDL.</p>
+
+<h2><a name="LOG">Log file</A></h2>
+
+<p>Ximview always tries to produce a text logfile containing
+<ul>
+<li>Program start time
+<li>Very basic header info for the data
+<li>Pixel data produced by clicking the middle mouse button
+<li>Output produced by Imstats and Peakfit.
+</ul>
+<p>By default the file is <kbd>ximview.log</kbd> and is overwritten each time
+ximview is run. The name can be specified by the <kbd>LOG</kbd> keyword on the
+command line or the <b>New logfile</b> option on the 
+<a href="menu.html#FILE" target="frame2">File menu</a>.
+If you do not have write access to the directory in which you are running
+ximview, it issues a warning message but carries on without writing the 
+logfile.</p>
+
+
+<P>As well as providing a convenient record of the numerical results
+produced by Ximview, if one has marked a series of points their coordinates
+can be read back into IDL for further plotting and processing. It is first
+necessary to close the log file to flush the output buffer, which can be
+done by starting a new logfile from the file menu. The file can then be
+read with <code>READCOL</code> from the IDL Astrolib:
+<pre>
+
+HIDL> READCOL, 'ximview.log', x, y, long, lat, flux, zoom
+
+</pre>
+<p>This reads the coordinates into the arrays, x, y etc
+(choose your arguments to match the values listed by ximview, which
+vary in number depending the dataset, e.g. HEALPix or not). 
+<code>READCOL</code> is smart enough to ignore
+the introductory lines in the logfile automatically, as long as there are
+some lines to read with the correct number of numerical values.
+ 
+<H2><a name="CRASH">Crash recovery</A></H2>
+
+<p>Ximview is now pretty stable, but in the unlikely event that it 
+crashes without properly exiting, 
+I recommend the following: 
+
+<p>If the program stopped in module <code>XIMVIEW</code>, 
+(you must have been running in debug mode, i.e. with <kbd>/VERBOSE</kbd> set),
+then before typing <kbd>RETALL</kbd> or <kbd>RETURN</kbd>, try the following:
+<pre>
+
+HIDL> error_status = 1
+HIDL> GOTO, BAIL
+
+</pre>
+<p>Otherwise, if the program returns to <code>MAIN</code> 
+(i.e. the command line), then 
+<pre>
+
+HIDL> gscroll_tidy  ; Deletes invisible (PIXMAP) windows.<BR>
+HIDL> heap_gc       ; Deletes any orphaned heap variables.
+HIDL> close, /all   ; If the crash happened while reading a file
+
+</pre>
+
+<HR>
+<ADDRESS>
+J. P. Leahy<br>
+Jodrell Bank Centre for Astrophysics<br>
+jpl@jb.man.ac.uk
+</ADDRESS><HR>
+<DIV class="pad2"> </div>
+</DIV>
+<DIV id="footer">
+<a href="comline.html" target="frame2"><IMG src="icons/left_arrow.png" 
+alt="Preceding page" title="Preceding page"></a>&nbsp;
+<a href="home.html" target="frame2"><IMG src="icons/home_24.png" 
+alt="Home page" title="Home page"></a>&nbsp;
+<a href="lutran.html" target="frame2"><IMG src="icons/right_arrow.png"
+alt="Next page" title="Next page"></a>
+</DIV>
+</BODY>
+</HTML>
+

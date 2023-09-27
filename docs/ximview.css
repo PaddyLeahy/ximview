@@ -1,0 +1,235 @@
+html {
+    height:100%; /* fix height to 100% for IE */
+    max-height:100%; /* fix height for other browsers */
+    margin: 0;
+    color: #454545;
+    font-size: 10pt;
+    background:#fff; /*color background - only works in IE */
+    background-color: #ffffff;
+    font-family: Verdana, Arial, Helvetica, San-Serif;
+    /* hide overflow:hidden from IE5/Mac */
+    /* \*/
+    overflow:hidden; /*get rid of scroll bars in IE */
+/* */
+}
+
+body {
+    height:100%; /* fix height to 100% for IE */
+    max-height:100%; /* fix height for other browsers */
+    overflow:hidden; /*get rid of scroll bars in IE */
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+}
+#content {
+    display: block; /* set up as a block */
+    height: 100%; /* set height to full page */
+    max-height: 100%;
+    overflow: auto; /* add scroll bars as required */
+    position: relative; /* set up relative positioning so that 
+                          z-index will work */
+    z-index: 3; /* allocate a suitable z-index */
+    padding-right: 0 /* 0.7em; */
+}
+
+p {
+    margin-right: 0.7em;
+    margin-left: 0;
+    margin-top: 6pt;
+    margin-bottom: 6pt;
+    display: block;
+}
+
+.pad2 {
+    display: block;
+    height: 29px; /* height to miss header and footer */
+}
+
+#footer {
+    position: absolute;
+    padding-top: 5px;
+    padding-right: 10px;
+    bottom:-1px;
+    right:18px;
+    display: block;
+    width: 100%;
+    height: 29px;
+    z-index: 4;
+    text-align: right;
+    background:#fff; /*color background - only works in IE */
+    background-color: #ffffff;
+    border-top: 1px solid #6c8ab5;;
+}
+
+h1, h2, h3, h4 {
+    font-style: normal;
+    margin-right: 0.7em;
+    margin-left: 0;
+    margin: 0;
+    margin-bottom: 0.15em;	
+    margin-top: 1.75em;
+    clear: right; /* don't let figure divisions cross headings */
+    border-bottom-style: solid;
+    border-bottom-width: 1pt;
+    padding-bottom: 3pt;
+    font-family: Arial, Helvetica, San-Serif;
+}
+
+h1 {
+    color: #333333;
+    font-size: 16pt;
+    font-weight: normal;
+    border-bottom-color: #333333;
+}
+
+h2 {
+    font-size: 14pt;
+    font-weight: normal;
+    border-bottom-color: #6c8ab5;
+    color: #454545;
+}
+
+h3 {
+    color: #454545;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+h4 {
+    font-weight: bolder;
+    color: #454545;
+    font-size: 10pt;
+}
+
+h2.API {
+    border-bottom-style: none;
+}
+h1.title {
+    border-bottom-style: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+h2.subtitle {
+    font-weight: bold;
+    font-size: 18pt;
+    margin-top: 0;
+    padding-left: 230px;
+}
+
+ol, ul {
+	margin-top: 0;
+	margin-bottom: 0;
+        margin-right: 0.7em;
+}
+
+li {
+	margin-bottom: 6pt;
+	margin-top: 6pt;
+	display: list-item;
+}
+
+#nav {
+    padding: 0.5em;
+    margin-bottom: 2em;
+}#nav ul {
+    margin-left: 0;
+    padding-left: 0;
+    display: inline;
+    border: none;
+}#nav ul li {
+    margin-left: 0;
+    padding-left: 2px;
+    border: none;
+    list-style: none;
+    display: inline;
+}
+#nav ul li:before {
+    content: " | ";
+}
+#nav ul li:first-child:before {
+    content: " ";
+}
+
+dl {
+    font-style: normal;
+    margin-right: 0.7em;
+}
+
+dl, dd, dt { font-size: 10pt}
+
+dt { font-weight: bold }
+
+dd { 
+    margin-top: 3pt;
+    margin-bottom: 6pt;
+}
+
+a:link, a:visited {
+	color: #009ddb;
+	text-decoration: none;
+}
+
+a[target="_PARENT"]:after { 
+    content: url(icons/External.png); 
+    margin: 0;
+    padding: 0;
+    margin-left: 2px;
+}
+
+a.pdf:after {
+    content: url(icons/Icons-mini-file_acrobat.png); 
+    margin: 0;
+    padding: 0;
+    margin-left: 2px;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+div.figure {
+    float: right;
+    border: thin silver solid;
+    margin: 5px;
+    padding: 5px;
+}
+div.figure p {
+    display: table-cell;
+    width: 1px;
+    text-align: center;
+    font-style: italic;
+    font-size: smaller;
+    text-indent: 0;
+}
+div.figure p:first-child {
+    display: table-row;
+}
+div.spacer {
+    clear: right;
+    margin-top: 1em;
+}
+#left{
+    float: left;
+    width: 33%;
+    text-align: center;
+}
+#right{
+    float: right;
+    width: 66%;
+    text-align: center;
+}
+#left H2, #right H2 {
+    text-align: center;
+    border: none;
+}
+#left UL, #right UL {
+    display:table;
+    list-style-type: none;
+    text-align: left;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+address {
+    clear: both;
+}

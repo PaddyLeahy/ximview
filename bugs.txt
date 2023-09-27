@@ -1,0 +1,66 @@
+Bugs in Ximview 0.9.1 (linux)
+
+* Mouse button assignment options: tweak
+   - startup options in info box x /macstyle DONE
+* logfile entries for ruler/protractor
+* units/format for bmaj/bmin in set image properties
+* Great circle arcs: pixels in the gaps (profile, ruler, protractor)
+* elastic ruler
+* Top-level button for grid (or default on)
+* Non-astro headers.
+   - grid lines with no astrometry
+* Make ximget return analysis result structure, or separate xim_result
+* Better defaults for asinh
+* PARSE_INPUT still claims projection set to grid
+
+
+* profile:
+  - Great circle 
+  - extend line
+  - elastic slice line 
+
+* persistent ruler for protractor
+
+* vo catalogue: Design widget - start with simple catalogue load
+
+* Help update: 
+     - index
+        ADD: Ruler, protractor, macstyle, cursor
+     - proofread, check links
+     - READMEs and other text files
+     - xim_result
+     - revise dialog images.
+
+Wishlist:
+
+* Histogram scaling ?
+* Keyboard shortcuts?
+* Output imstats pixel mask? - where to?
+* Gaussfit?
+* coordinate grid for overview mode?
+
+Fixed bugs/features:
+
+* format pixel coords to allow for maximum image size DONE in maxfit
+* MAD in imstats: DONE
+* set asinh in fitsload  DONE
+* resize for small screens (< default size) DONE
+* still format code problems in ximview_scale: use G format DONE
+* great circle line for ruler DONE
+* angle marker for protractor DONE
+* sexagesimal input for goto (as in ximgo) DONE
+* turn off progcol when not in use DONE
+* set default box size by beam area DONE
+* end tags for ruler - not needed with persistent markers
+* Scale bar: avoid "10+3 x 10^-3 unknown" FIXED
+* coordinate grids: DONE 
+     - Generic gores? Ignore until becomes an issue.
+     - Still may not reach the pole in HPX FIXED
+     - XPH fixed.
+     - Fails to start latitude at -90. FIXED
+     - coordinate grid for longitude (as opposed to RA). DONE
+     - coordinate labels   DONE
+* better format checking in ximview_goto DONE
+* odd number of pixels for imstats box DONE
+* sort out clear mark/ clear last mark DONE
+

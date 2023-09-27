@@ -1,0 +1,296 @@
+XIMVIEW Updates
+
+v0.8    Released  27:08:2013
+ - Launch widget without input file
+ - scroll-wheel zoom
+ - FITS headers displayed and output by ximget
+ - Revised defaults for auto-scale and colour handling
+ - Adaptive precision of numerical results
+ - Sexagesimal notation for RA/Dec
+ - Laxer rules on astrometry matching
+ - HTML help
+ - Custom astrolib routines previously used now merged back into standard
+   distribution. XPH projection now supported by astrolib.
+ - Many more bug fixes, including much better insulation of graphics state
+   from the command line.
+
+v0.7    Released 17:06:2013
+ - Accumulated minor bug fixes.
+
+v0.6.2  Released 03:08:2009
+ - Fixed bug which caused incorrect RING pixel index to be listed
+   for pixels in the eastern half of facets 5,6 and 7 (all in the
+   equatorial row). Pixel indices were off by 4*N_side.
+ - Updated various documentation headers listing version as 0.5
+
+v0.6    Released 11:11:2008
+ - Minor bug fix for reading CUT4 files.
+ - Files -> Write PNG now includes the scale bar as well as the
+   main image area.
+
+v0.5    Released 24:07:2008
+
+This is the first widely-distributed release (as part of HEALPix 2.1)
+Changes from v0.4.2 are minor:
+
+ - Files -> Load FITS now notices the extension number if specified, 
+   instead of always using the default (primary HDU if it contains an
+   image, otherwise extension 1). 
+ - HTML documentation has been revised to remove formatting errors and 
+   improve the formatting of maths (a bit).
+
+V0.4.2  Released 03:05:2008
+
+This is a minor bug fix release. Bugs fixed:
+
+ - Corrected typo in HEALPix sentinel values.
+ - ximview no longer crashes on startup when !X.style = 1 is set (!)
+ - Analysis -> "Set image properties" should now always adjust the correct 
+   tab. 
+ - Tab labels for polarization tabs no longer revert to "RGB" when another 
+   tab is added.
+ - The tab selection matrices for RGB and polarization now omit tabs which 
+   already carry RGB or polarization images.
+ - The marker symbol is now always drawn in the right window and nearly 
+   always with the right colour.
+ - RGB images now behave "correctly" if the tab containing one of the colour 
+   channels is deleted (i.e., that colour vanishes but the program does not 
+   crash).
+
+
+V0.4  Released 30:03:2008
+
+Changes
+ - Colour usage:
+       * Tabs -> "Red-Green-Blue" allows you make a 3-colour image using 
+         images already loaded on other tabs for each colour channel. 
+         There are two modes: "Saturate to white" and "Preserve colour for 
+         saturated pixels" (the latter based on the SDSS algorithm).
+	 See the Help file for details.
+       * Tabs -> Polarization -> "Colour" allows you to display polarization
+         data using hue-value or hue-saturation-value scaling.
+       * Display -> Colour Handling -> "Separate on each tab" is now fully
+         enabled. Tabs containing RGB images always operate in this mode.
+       * Autoscaling has been tuned for all available colour tables and
+         transfer functions.
+       * Flashing has been reduced for DirectColor mode on 24-bit displays.
+         This mode has the advantage that changes in the colour tables are
+         reflected instantly, so you may prefer it if you are doing a lot
+         of colour manipulation (but there is still significant flashing).
+       * The colour scale bar now lists the units.
+       * Colours of scaling histograms have been improved.
+
+   The first two options are only available on 24-bit displays.
+
+ - Ximview (and its PARSE_INPUT routine) now recognizes HEALPix CUT4 
+   partial-sky datasets and converts them into partial-sky images in
+   the usual HEALPix projections. The cursor readout should correctly
+   give sky positions and HEALPix (all-sky) pixel numbers.
+
+ - New option: Display -> "Reset to default screen size" restores the GUI 
+   to its initial screen size (512 x 512 pixel image area).
+
+ - New option: File -> "Write PNG" dumps the currently-displayed image
+   region to a PNG file.
+
+ - New option: File -> "Load image file" loads an image in any of the
+   formats known to IDL. Not very useful since the new image must match
+   the size of the images already loaded.
+
+ - If you load data from a directory other than your default directory, 
+   ximview remembers and starts in the same directory the next time you
+   use File -> "Load FITS". This only affects bulk data: PNG and log files 
+   are always written to your default directory (unless you include a path
+   in the file name).
+
+ - On the Tabs -> "Blink Setup" dialog, you can now choose to omit the scale
+   bar when blinking, as it can be distracting.
+
+ - New option: Analysis -> "Set image properties" allows you to set or 
+   reset the polarization and frequency stored for each image. But see 
+   Help: "Features and Bugs" for a potential problem with this.
+
+ - Hypertext help is now available, using the IDL Help Assistant in IDL
+   version 6.2 and higher. You can also access the files directly with your
+   favourite browser: start at docs/home.html in the XIMVIEW directory.
+
+ - All generally-usable routines now have IDL documentation headers.
+
+ - "Load FITS" and "Adjust scaling" dialogs have been made more user-
+   friendly.  The former no longer calls the latter if you autoscale on 
+   input, but you can now have the autoscale histograms plotted in that 
+   case.
+
+ - Default HEALPix sort order changed to "RING", for consistency with other
+   HEALPix programs.
+
+ - The Ximview window now pops up right away (still takes a while to load
+   large images, though)
+
+Bug fixes: 
+ - Request for columns by names now works.
+ - Ximview / parse_input can now (again) read multiple columns from HEALPix 
+   files which use a repeat count in TFORMn.
+ - Ximview now returns to its original size after you maximize the window
+   and then unmaximize it, instead of shrinking slightly. Also, no longer 
+   jumps to small size if you drag the edge too slowly.
+ - Scaling problems for all-zero maps have been fixed.
+ - NUMUNIT now works for value = 0.0 and parses units like "mK,thermodynamic"
+ - Ximview now works properly when an already-gridded healpix map is loaded
+   with the /ROLL option set.
+ - HEALPix "Magic number" blanks are now recognised (but are converted to
+   NaNs on input).
+ - Ximview no longer complains when header items are found in both the
+   primary header and the extension header (it uses the latter). Trivial
+   duplications within the same extension (as are common in WMAP headers) 
+   are now also ignored.
+
+
+V0.3a Released 28:02:2008
+
+Changes:
+ - ximview now can display multiple (aligned) images via a set of tabs, 
+   with associated changes, allowing you to:
+        * blink between tabs in any desired sequence
+        * transfer data to and from the widget after it has been started via 
+          a second call to ximview (to) and a new "ximget" function (from).
+        * Read a FITS file into the widget.
+        * Adjust scaling parameters, including a basic auto-scale function.
+
+ - There is now some choice of colour scale and transfer functions.
+
+ - You can explicit specify set the view centre, via image pixel or 
+   coordinates.
+
+ - You can now specify the FITS extension you want.
+
+ - The Peakfit button can now be set to find specifically a maximum, or 
+   specifically a minumum, instead of the default behaviour of finding the
+   largest extremum in absolute terms.
+
+ - There is now a menu bar at the top of the widget giving access to these 
+   features and a few others. Options for Imstats and Peakfits have been
+   moved to there instead of the bottom of the window.
+
+   Note: a number of menu options appear but do nothing yet. Consider these
+   advertisments for future versions!
+
+ - Documentation: Ximview and Ximget now have standard IDL documentation
+   headers, which can be read using the IDL routine DOC_LIBRARY. This file
+   and doc/help.txt file can be accessed from Ximview's Help menu via
+   "Release notes" and "Help" respectively.
+
+Changes to lower-level routines:
+ - PARS_INPUT has been renamed PARSE_INPUT to reduce confusion.
+ - The distribution contains more files because some code has been split out 
+   of the main ximview.pro file. This will only be compiled when needed, 
+   which should slightly reduce startup time on slow systems. There is also
+   a more structured directory system (this should not affect usage).
+
+Bug fixes:
+ - Bug fixed in PARSE_INPUT that generated unimportant divide-by-zero messages
+ - Various bugs fixed in PARSE_INPUT for obscure input types
+ - Changes to SCALE_IMAGE to prevent floating-point errors due to conversion
+   to bytes of floats outside the range of short integers. (-32768 - 32767).
+ - Equivalent change to SET_COLOUR_BAR...but if you have that many wraps the
+   colour bar is not much use as it is radically undersampled.
+ - Many changes to NUMUNIT to give more sensible results.
+ 
+v0.2.1 Released 31:01:2008
+
+Changes:
+
+ - Bug fixed in PARS_INPUT that prevented reading of on-line images
+ - new routine NUMUNIT used by PARS_INPUT for formatting number-unit pairs.
+
+v0.2a Released 29:01:2008
+
+Changes:
+
+ - You can now resize the ximview window to get a bigger or smaller view.
+   Occasionally this disables the cursor in the draw window (so tracking 
+   data is not updated and clicking has not effect): to restore normal 
+   operation, make a small adjustment to the window size.
+
+ - ximview now switches device to WINDOWS or X as appropriate if needed, 
+   and sets decomposed = 0. It does this whenever the cursor enters the 
+   window, and restores the previous graphics state when the cursor leaves.
+   This should cure most of the colour problems that have been reported,
+   and allows ximview to work with other IDL graphics programs simultaneously.
+
+ - You can select a column in a multi-column table with COLUMN=col, where col 
+   is either a number or the column name. COLUMN=n will also select a plane of 
+   a multi-plane image.
+
+ - ximview now produces a log file containing data for marked pixels and 
+   outputs from Peakfit and Imstats (these are still printed to the terminal
+   as well). By default the file is 'ximview.log' and will be overwritten each 
+   time ximview is launched. To give a unique name 'ximview_1.log', 
+   'ximview_2.log' etc., set /LOG, or set LOG= to a name of your choice.
+
+ - Regions of interest has been enabled: if you click the Imstats
+   button after selecting ROI, a second window pops up allowing you to 
+   select various ways of drawing the ROI (uses the built-in IDL routine
+   CW_DEFROI). Imstats printout now includes flux density (area-integrated 
+   temperature) if the pixel size is known.
+
+ - Initial "overview" is now centred, instead of positioned at the bottom left
+   corner of the display window.
+
+ - Initial overview is now zoomed-in if the input map is small. 
+
+ - ximview now starts up slightly to the right of the default starting 
+   position on your computer display (top left corner of screen under linux), 
+   mainly to avoid covering the ROI widget when that appears.
+
+ - For small images, on entry to zoom mode the zoom factor is set to
+   the largest possible value consistent with showing the whole image,
+   provided this is >= 1.
+
+ - Panning is disabled if the whole image is on screen.
+
+ - ximview now notices when it reaches the maximum zoom in/out, instead of
+   waiting until you try to exceed these limits.
+
+ - pixel readout is updated immediately on zoom or change from overview to 
+   zoom mode, instead of waiting for the cursor to move.
+
+ - numerous minor bug fixes.
+
+Changes to lower-level routines:
+
+ - pars_input now reads FITS files containing only a primary HDU.
+ - pars_input FITS I/O should generally be faster and require less memory.
+ - pars_input also has a COLUMN parameter, which can be an array. In this
+   case its output is usually an array of pointers to 2D maps.
+ - pars_input is now better at interpreting FITS headers when constructing
+   the image title.
+
+ - hpgrid can now accept as input an N-dimensional array of pointers, each 
+   referencing a (1D) healpix map array. In this mode, or if it is given a 
+   1+N dimensional map, it outputs an N-dimension array of pointers to 
+   gridded 2D maps.
+ - hpgrid no longer prints timing information, unless you set /VERBOSE
+
+ - wcsxy2sph has been improved so ximview should no longer produce 
+   astrometry error messages when ROLL is disabled.
+
+ - imstats now accepts pixel lists and uses the astrometry structure or 
+   HEALPix Nside to calculate pixel areas. It reports detection of variable 
+   pixel area but only uses a rough average to do the integration.
+
+ - grid2hp_index now has a /BOTH option which returns both RING and NESTED
+   pixel numbers.
+
+ - Lower-level routines are now compiled "hidden" so they don't clog up your 
+   HELP listings.
+
+ - crashes (if any) should return to the command line ($MAIN$).
+
+ - All IDL Astrolib routines used, that are not included in the HEALPix 
+   distribution, are now included in the astrolib subdirectory of this
+   distribution. To get the benefit of recent bug fixes, set your path 
+   to access this directory before local copies of Astrolib, including 
+   the HEALPix subset.
+
+v0.1a: Alpha test version. Released 12:01:2008 
