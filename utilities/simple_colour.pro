@@ -1,3 +1,20 @@
+; SIMPLE_COLOUR
+;
+; Copyright (C) 2007, 2012, 2023 J. P. Leahy 
+;
+;    This program is free software: you can redistribute it and/or modify
+;    it under the terms of the GNU General Public License as published by
+;    the Free Software Foundation, either version 3 of the License, or
+;    (at your option) any later version.
+;
+;    This program is distributed in the hope that it will be useful,
+;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;    GNU General Public License for more details.
+;
+;    You should have received a copy of the GNU General Public License
+;    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;
 ;+
 ; NAME:
 ;      SIMPLE_COLOUR
@@ -60,6 +77,7 @@
 ; MODIFICATION HISTORY:
 ;      J. P. Leahy, ages ago.
 ;      Version 1.0  Doc head added 12 Oct 2012
+;      Version 2.0  Darker colours for PS printing
 ;-
 pro simple_colour, c1, cols, PS=psfile
 ;
@@ -78,10 +96,10 @@ IF (KEYWORD_SET(psfile)) THEN BEGIN
     !P.CHARSIZE = 1.1
     !X.THICK = 3
     !Y.THICK = 3
-;    Set colour table to primaries, complementaries, and pastels:
-    TVLCT, [255, 0, 0, 0, 255, 255, 255, 127, 127, 127, 255, 255, 0, 255], $
-           [0, 255, 0, 255, 0, 255, 127, 255, 127, 255, 127, 255, 0, 127], $
-           [0, 0, 255, 255, 255, 0, 127, 127, 255, 255, 255, 127, 0, 0], 1
+;    Set colour table to primaries, complementaries, and dark pastels:
+    TVLCT, [200, 0, 0, 0, 255, 127, 127,  64,  64,  64, 127, 127, 0, 200], $
+           [0, 127, 0, 200, 0, 127,  64, 127,  64, 127,  64, 127, 0, 113], $
+           [0, 0, 255, 200, 255, 0,  64,  65, 127, 127, 127,  64, 0, 0], 1
 
 ENDIF ELSE BEGIN
     system = STRUPCASE(!VERSION.os_family)
@@ -93,6 +111,7 @@ ENDIF ELSE BEGIN
     !P.CHARSIZE = 1
     !X.THICK = 1
     !Y.THICK = 1
+;    Set colour table to primaries, complementaries, and pastels:
     TVLCT, [255, 0, 0, 0, 255, 255, 255, 127, 127, 127, 255, 255, 255, 225], $
       [0, 255, 0, 255, 0, 255, 127, 255, 127, 255, 127, 255, 255, 127], $
       [0, 0, 255, 255, 255, 0, 127, 127, 255, 255, 255, 127, 255, 0], 1
