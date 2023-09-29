@@ -570,7 +570,7 @@ IF trfunc EQ 1 || trfunc EQ 2 THEN BEGIN
     aticks = ABS(ticks)
     low = WHERE(aticks GE 1.7d-3 AND aticks LT 10d0, nlow)
     IF nlow GT 0 THEN tnames[low] = $
-      STRTRIM(STRING(ticks[low],FORMAT="(G6.2)"),2)
+      STRTRIM(STRING(ticks[low],FORMAT="(G7.2)"),2)
     mid = WHERE(aticks GE 10d0 AND aticks LT 1d4, nmid)
     IF nmid GT 0 THEN tnames[mid] = $
       STRTRIM(STRING(ticks[mid],FORMAT="(F5.0)"),2)
@@ -3062,8 +3062,8 @@ PRO ximview_profile_opts, event
 WIDGET_CONTROL, event.TOP, GET_UVALUE = state
 WIDGET_CONTROL, state.TABS, GET_UVALUE = mode
 ;
-
-MESSAGE, /INFORMATIONAL, 'No options to set yet'
+ok = DIALOG_MESSAGE('No profile options to set yet', $
+                    DIALOG_PARENT=event.TOP, /INFORMATION)
 END
 PRO ximview_geom, event, result
 ; Ruler / Protractor
@@ -3102,9 +3102,12 @@ IF doangle THEN BEGIN
    yy = [yy, mode.YPT2]
 ENDIF
 
+log = state.loglun
+
 ; Calculate distances between last two marked points (XPT, XPT1 etc):
 astro = state.IS_ASTROM
 fmt1 = "('Distance between last two marked points: ',"
+pa_fmt ="('New point at position angle',F7.1,' degrees wrt old point')" 
 IF astro THEN BEGIN
    XY2AD, xx, yy, *state.astrom, ra, dc
    pixsize = TOTAL(ABS((*state.astrom).cdelt)) ; Actually dx+dy in degrees
@@ -3113,20 +3116,26 @@ IF astro THEN BEGIN
    AD2XY, arc[*,0], arc[*,1], *state.astrom, xa,ya
    
    unit = 'arcsec'
-   PRINT, dis, unit, dis/60.0, FORMAT = fmt1+"G0.5,1X,A,2X,G0.5,' arcmin')"
+   d_fmt = fm1 + "G0.5,1X,A,2X,G0.5,' arcmin')"
+   PRINT, dis, unit, dis/60.0, FORMAT = d_fmt
+   PRINTF, log, dis, unit, dis/60.0, FORMAT = d_fmt
+
    posang, 1, ra[1]/15, dc[1], ra[0]/15,dc[0], pa_deg
-   PRINT, pa_deg, FORMAT = $
-          "('New point at position angle',F7.1,' degrees wrt old point')"
 ENDIF ELSE BEGIN
    dx1 = xx[0] - xx[1]
    dy1 = yy[0] - yy[1]
    dis = SQRT(dx1^2 + dy1^2)
    unit = 'pixel'
-   PRINT, dis, unit, FORMAT = fmt1+"G0.5,1X,A)"
+   d_fmt = fmt1 + "G0.5,1X,A)"
+   PRINT, dis, unit, FORMAT = d_fmt
+   PRINTF, log, dis, unit, FORMAT = d_fmt
    xa = xx[0:1]
    ya = yy[0:1]
    pa_deg = !radeg*ATAN(dy1,dx1)
 ENDELSE
+PRINT, pa_deg, FORMAT = pa_fmt          
+PRINTF, log, pa_deg, FORMAT = pa_fmt
+
 xy =im2tv(xa, ya, mode)
 
 IF doangle THEN BEGIN
@@ -3149,9 +3158,10 @@ IF doangle THEN BEGIN
       xa2 = xx[1:2]
       ya2 = yy[1:2]
    ENDELSE
-   PRINT, angle, FORMAT= $
-          "('Angle between last three marked points:',F7.1,' degrees')"
-
+   a_fmt = "('Angle between last three marked points:',F7.1,' degrees')" 
+   PRINT, angle, FORMAT= a_fmt
+   PRINTF, a_fmt, angle, FORMAT= a_fmt
+          
 ; plot angle marker. NB angle on projection is not angle on sky
    radius = ((0.5 * MAX([dis,dis2])) > 8) < MIN([dis,dis2]) ; arcsec
    nseg = FIX(radius*ABS(angle) / (3600*pixsize)) > 3
@@ -3171,6 +3181,7 @@ IF doangle THEN BEGIN
       yc = yy[1] + radius*SIN(phi)
    ENDELSE
 ENDIF ELSE angle = !values.F_NAN
+
 swap_lut, *state.XIM_GRAPH, (*state.TABARR)[0], old_graph
 
 PLOTS, xy[*,0], xy[*,1], /DEVICE
@@ -5149,7 +5160,7 @@ ENDIF
 *state.BLINK_SEQ = INDGEN(ntab+noldtab)
 WIDGET_CONTROL, tlb, /SENSITIVE
 IF mode.OVERVIEW THEN WIDGET_CONTROL, state.ZOOMCOL, SENSITIVE = 0
-sens =  ntab + noldtab GE 2
+sens =  ntab + noldtab GE 2 && ~state.FIRST
 WIDGET_CONTROL, state.BLINK,  SENSITIVE = sens
 WIDGET_CONTROL, state.FRAMES, SENSITIVE = 1
 

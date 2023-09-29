@@ -1,14 +1,13 @@
 Ximview Help
 
-version 0.8 beta
+version 0.9.1 beta
 
 NOTE: A hypertext version of this help file is available in the docs
-subdirectory of your Ximiview directory. Start with docs/home.html.
-
+subdirectory of your Ximiview directory. Start with docs/ximview.html.
+This text version is out of date in some areas.
 
 Contents:
 
-* What's New in Ximview 0.8
 * Introduction
 * Menu bar options
 * Command line options
@@ -24,65 +23,6 @@ Contents:
   - Preserve-colour option
 * Gripes & FAQs
 * Credits
-
-What's New in Ximview 0.8
-=========================
-
-This release features some significant improvements in usability
-through both new features and better default behaviour. A substantial
-number of bugs have been fixed. This remains a beta release, so please
-send me bug reports, complaints about unsatisfactory features, and
-requests for new features.
-
-Highlights include
-
- o  Ximview can now be launched without specifying an input dataset,
-    so the GUI file chooser can be used to find the file you want.
- o  You can zoom in and out using the scroll wheel on your mouse.
- o  FITS and TIFF headers of datasets can be displayed, and can be
-    returned to the IDL command line by ximget.  
- o  Ximview now auto-scales input datasets by default.  
- o  Colour tables are now independent for each tab, although it is easy
-    to choose a uniform colour table and transfer function for all tabs.
- o  Precisions of positions and image intensities reported by Ximview are 
-    now chosen appropriately for the image resolution and dynamic range. 
- o  Right Ascension and Declination are reported in sexagesimal form; 
-    other coordinate systems are still reported in degrees.  
- o  If a new image is loaded which has no astrometric metadata (e.g. a 
-    simple data array from the command line), it is now assumed to be 
-    properly aligned with the existing images, providing it matches in 
-    terms of pixel dimensions. Similarly, if the first image loaded lacked
-    astrometry, a later image with astrometry will be assumed to
-    define the coordinate system. If astrometry is specified in more
-    than one dataset, they still must agree.  
- o  Tab labelling has been improved.
- o  The help system has been updated.
-
-Major bug fixes:
-
- o  Ximview now properly selects columns from IDL structures and reads
-    extensions in FITS files which have an image in the primary HDU.
- o  Autoscale now works sensibly on any input, including integer and
-    byte values and featureless (flat) images.  
- o  Fluxes and intensities reported by Imstats and Peakfit are now correct; 
-    formerly they were sometimes in error by powers of 1000.  
- o  The graphics state is now fully insulated from the command line, so 
-    changing the graphics system variables !P, !X, !Y no longer affects the 
-    display of scale bar labels etc. This has fixed a problem under Windows
-    where plots intended for the normal IDL plot window sometimes
-    appeared on the Ximview screen instead.  
- o  The Red-Black-Blue colour scale now always aligns black with effective 
-    zero intensity as intended: formerly this only worked if the image was 
-    explicitly re-scaled.  
- o  Various bugs in the unit parser have been fixed and it now has a more 
-    thorough go at putting whatever units are found in the FITS header into 
-    standard form.  
- o  Closing popup windows via the window manager no longer generates (usually 
-    harmless) error messages, but is equivalent to choosing "Cancel".
-
-Ximview still lacks a few planned features, so the release number is
-still less than 1.0. The most obvious of these is the ability to
-overlay coordinate grids. Don't expect this anytime soon.
 
 Introduction
 ============
@@ -128,7 +68,8 @@ graphics. It is rather slow if run over the internet.
 
 Getting Started
 ---------------
-Although Ximview has a rich set of command-line options, it can be launched from the IDL command line simply by typing its name:
+Although Ximview has a rich set of command-line options, it can be launched 
+from the IDL command line simply by typing its name:
 
 HIDL> ximview
 

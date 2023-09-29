@@ -19,8 +19,8 @@
 <pre>
 
 ximview [, {Input | /HELP] [, Range  [, {Proj | /NPOLE | /SPOLE} 
-        [, {Order | /RING | /NESTED}]]]] [, COLUMN = col] 
-        [, EXTENSION = ext] [, WRAP = wrap] [, /ROLL] [, NAME = name] 
+        [, {Order | /RING | /NESTED}]]]] [, COLUMN = col]
+        [, EXTENSION = ext] [, WRAP = wrap] [, /ROLL] [, NAME = name] [, /MACSTYLE]
         [, LOG = logfile] [, /TEMPORARY] [,/OVERWRITE] [,/EXPERT] [, /VERBOSE] 
 
 </pre>
@@ -153,7 +153,11 @@ format itself.</dd>
 and sometimes in tab labels if several datasets are loaded. Equivalent
 to the "Title" option in the <b> <a href="menu.html#FITSLOAD"
 target = "frame2">Load FITS</a></b> dialog box.
-If not specified, defaults to 'File n' for the nth dataset loaded.
+If not specified, is constructed from file name and/or header if available, otherwise defaults to 'File n' for the nth dataset loaded.
+</dd>
+
+<dt><kbd>/MACSTYLE</kbd></dt><dd>Sets default mouse button operations suitable for single-button mouse: Shift-click to mark point, ctrl-click/ctrl-shift-click
+to zoom in or out.
 </dd>
 
 <dt><kbd>/LOG</kbd></dt><dd>Set to create a unique name for the log file 
@@ -165,7 +169,7 @@ If not specified, defaults to 'File n' for the nth dataset loaded.
 <dt><kbd>/TEMPORARY</kbd></dt><dd> Set to allow the program to overwrite 
 the input data array, thereby saving memory.</dd>
 
-<dt><kbd><a name="OVERWRTE">/OVERWRITE</a></kbd></dt><dd> If set, overwrites the currently-displayed image with a new one rather than creating a new tab. This only works if there is just one image displayed. In this case the new image does not have to match the old one in any way: it is as if you re-started ximview from scratch.</dd>
+<dt><kbd><a name="OVERWRITE">/OVERWRITE</a></kbd></dt><dd> If set, overwrites the currently-displayed image with a new one rather than creating a new tab. This only works if there is just one image displayed. In this case the new image does not have to match the old one in any way: it is as if you re-started ximview from scratch.</dd>
 
 <dt><kbd><a name="EXPERT">/EXPERT</a></kbd></dt><dd>Turns off some of the more routine messages. Expert mode remains set for the duration of the session. You can also set it by setting the system variable !ximview_expert = 1. The system variable is created on the first call to ximview, or you can use the IDL command DEFSYSV to create it if you want to set it in your IDL startup file.</dd>
 <dt><kbd><a name="VERB">/VERBOSE</a></kbd></dt><dd> Set to produce a lot of 
@@ -180,7 +184,7 @@ up manually are given <a href="details.html#CRASH" target="frame2">here</a>.
 <ADDRESS>
 J. P. Leahy<br>
 Jodrell Bank Centre for Astrophysics<br>
-jpl@jb.man.ac.uk
+j.p.leahy@manchester.ac.uk
 </ADDRESS><HR>
 <DIV class="pad2"> </div>
 </DIV>

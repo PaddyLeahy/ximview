@@ -390,10 +390,10 @@ information based on images already loaded.
       <li>Distance to extend the profile at each end. This is useful if you want to plot a profile running through a pair of peaks: mark a point near each peak and centre it on the peak using maxfit, then specify an extension of a few beam widths so that the profile shows the full rise and fall on each peak.</li>
     </ul>
 </dd>
-  <dt><b><a name="CLEAR_LAST">Clear last mark</a></b></dt>  
+  <dt><b><a name="CLEAR_LAST">Clear marks -> Last</a></b></dt>  
   <dd>Unsets the last marked point; the current mark is restored to the last-but one point (if set) and the last-but-one point is restored to the last-but-two
 (if set).</dd>
-  <dt><b><a name="CLEAR">Clear marks</a></b></dt>
+  <dt><b><a name="CLEAR">Clear marks -> All</a></b></dt>
   <dd>Unsets the current marked points and removes the graphics markers.</dd>
   <dt><b><a name="SIP">Set image properties</a></b></dt>
   <dd><p>A dialog box allows you to select a tab and inspect and change
@@ -414,13 +414,13 @@ columns are used. Otherwise there must be columns labelled "RA", "Dec" and
 "Name". Positions are automatically converted into the coordinate system being displayed. You are also prompted to choose a symbol to be used for this catalogue,
 and whether or not to plot identifier labels. Multiple catalogues may be plotted at once. Catalogues already held in IDL memory can be plotted using <a href="ancillary.html#XIMCAT">ximcat</a>.</dd>
       <dt><b>Process catalogue</b></dt>
-      <dd>This is an experimental feature, see <a href="prog.html">programming with Ximview</a>.</dd>
+      <dd><b>UNDER DEVELOPMENT - currently does not work</b>, see <a href="prog.html">programming with Ximview</a>.</dd>
   </dl></dd>
   <dt><b><a name="RULER">Ruler</a></b></dt>
   <dd>Prints the distance between two points, and also the angle of the line on the plot. If the WCS projection is set, the distance is the great-circle distance and the angle is the position angle, PA (anticlockwise from north), otherwise the linear distance, and the angle anticlockwise from the y axis. If the axes are not defined or have different units, the distance is in pixels and an angle is not reported.
     <dl> 
       <dt><b>Use marked points</b></dt><dd>Gives the distance between the last two marked points.</dd>
-      <dt><b>Interactive</b></dt><dd>Gives the distance from the last marked point to a new point. The path between the points is plotted until the new point is marked.</dd>
+      <dt><b>Interactive</b></dt><dd><b>UNDER DEVELOPMENT- currently does not work</b>. Aim is to give the distance from the last marked point to a new point. The path between the points is plotted until the new point is marked.</dd>
 </dl>
 In both cases the path between the points is plotted at the end, but will disappear when the view is shifted.</dd>    
   <dt><b><a name="PROTRACTOR">Protractor</a></b></dt>
@@ -464,7 +464,7 @@ header is stored in the FITS header comments.</p>
 <ADDRESS>
 J. P. Leahy<br>
 Jodrell Bank Centre for Astrophysics<br>
-jpl@jb.man.ac.uk
+j.p.leahy@manchester.ac.uk
 </ADDRESS><HR>
 <DIV class="pad2"> </div>
 </DIV>

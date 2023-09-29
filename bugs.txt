@@ -2,14 +2,15 @@ Bugs in Ximview 0.9.1 (linux)
 
 * Mouse button assignment options: tweak
    - startup options in info box x /macstyle DONE
-* logfile entries for ruler/protractor
+* logfile entries for ruler/protractor DONE
 * units/format for bmaj/bmin in set image properties
 * Great circle arcs: pixels in the gaps (profile, ruler, protractor)
 * elastic ruler
 * Top-level button for grid (or default on)
 * Non-astro headers.
    - grid lines with no astrometry
-* Make ximget return analysis result structure, or separate xim_result
+* Save analysis results structures from imstats, peakfit, ruler/protractor, 
+  and return via ximget, or separate xim_result
 * Better defaults for asinh
 * PARSE_INPUT still claims projection set to grid
 
@@ -27,8 +28,6 @@ Bugs in Ximview 0.9.1 (linux)
      - index
         ADD: Ruler, protractor, macstyle, cursor
      - proofread, check links
-     - READMEs and other text files
-     - xim_result
      - revise dialog images.
 
 Wishlist:
