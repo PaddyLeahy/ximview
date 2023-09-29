@@ -1,6 +1,6 @@
 ; -----------------------------------------------------------------------------
 ;
-;  Copyright (C) 2007-2020   J. P. Leahy
+;  Copyright (C) 2007-2020, 2022-23 J. P. Leahy
 ;
 ;
 ;  This file is part of Ximview and of HEALPix
@@ -22,8 +22,6 @@
 ;
 ; -----------------------------------------------------------------------------
 ; Module ximview: widget-based image inspection tool
-;
-; J. P. Leahy 2008 - 2020
 ;
 ; This file contains an IDL documentation block after the ximview
 ; procedure is declared. As well as ximview itself the file contains the
@@ -2521,12 +2519,12 @@ WIDGET_CONTROL, event.ID,   GET_VALUE = label
 WIDGET_CONTROL, event.TOP,  GET_UVALUE = state
 WIDGET_CONTROL, state.TABS, GET_UVALUE = mode
 
-astrom = state.ASTROM
-IF SIZE(*astrom,/TYPE) NE 8 THEN BEGIN
+
+IF state.IS_ASTROM THEN astrom = *state.ASTROM ELSE BEGIN
    ok = DIALOG_MESSAGE('No astrometry information to plot coordinates', $
                        /ERROR, DIALOG_PARENT = top)
    RETURN
-ENDIF
+ENDELSE
 
 CASE label OF
    'On/Off': BEGIN              ; Toggle coord line plotting
@@ -3116,7 +3114,7 @@ IF astro THEN BEGIN
    AD2XY, arc[*,0], arc[*,1], *state.astrom, xa,ya
    
    unit = 'arcsec'
-   d_fmt = fm1 + "G0.5,1X,A,2X,G0.5,' arcmin')"
+   d_fmt = fmt1 + "G0.5,1X,A,2X,G0.5,' arcmin')"
    PRINT, dis, unit, dis/60.0, FORMAT = d_fmt
    PRINTF, log, dis, unit, dis/60.0, FORMAT = d_fmt
 
@@ -3160,7 +3158,7 @@ IF doangle THEN BEGIN
    ENDELSE
    a_fmt = "('Angle between last three marked points:',F7.1,' degrees')" 
    PRINT, angle, FORMAT= a_fmt
-   PRINTF, a_fmt, angle, FORMAT= a_fmt
+   PRINTF, log, angle, FORMAT= a_fmt
           
 ; plot angle marker. NB angle on projection is not angle on sky
    radius = ((0.5 * MAX([dis,dis2])) > 8) < MIN([dis,dis2]) ; arcsec
@@ -3774,7 +3772,7 @@ ON_ERROR, 1
 
 ; Find help directory
 info = ROUTINE_INFO('ximview', /SOURCE)
-dir = STRSPLIT(info.PATH, 'ximview.pro', /REGEX, /EXTRACT) + 'docs/'
+dir = STRSPLIT(info.PATH, 'core/ximview.pro', /REGEX, /EXTRACT) + 'docs/'
 unhelp = ['Abandon hope all ye who enter here.', $
           "Lasciate ogne speranza, voi ch'intrate", $
           'Send requests for help to /dev/null', $
@@ -3812,8 +3810,8 @@ CASE label OF
     ELSE: MESSAGE, /INFORMATIONAL, 'Option ' + label + ' not yet available.'
 ENDCASE
 
-IF assistant THEN BEGIN
-    ONLINE_HELP, BOOK=book
+IF assistant THEN BEGIN ; NB docs/ is already in !help_path
+    ONLINE_HELP, BOOK=dir+book, /FULL_PATH
 ENDIF ELSE BEGIN
     XDISPLAYFILE, dir+file, GROUP = event.TOP, DONE_BUTTON = done, $
       HEIGHT = height, TITLE = title
@@ -4859,7 +4857,7 @@ IF launching THEN BEGIN
 
     ; Find help directory & add to !help_path if necessary
     info = ROUTINE_INFO('ximview', /SOURCE)
-    helpdir = STRSPLIT(info.PATH, 'ximview.pro', /REGEX, /EXTRACT) $
+    helpdir = STRSPLIT(info.PATH, 'core/ximview.pro', /REGEX, /EXTRACT) $
         + 'docs'
     pathsep = path_sep(/SEARCH_PATH)
     dirs = STRSPLIT(!help_path, pathsep, /EXTRACT)

@@ -2,7 +2,6 @@ Bugs in Ximview 0.9.1 (linux)
 
 * Mouse button assignment options: tweak
    - startup options in info box x /macstyle DONE
-* logfile entries for ruler/protractor DONE
 * units/format for bmaj/bmin in set image properties
 * Great circle arcs: pixels in the gaps (profile, ruler, protractor)
 * elastic ruler
@@ -62,4 +61,6 @@ Fixed bugs/features:
 * better format checking in ximview_goto DONE
 * odd number of pixels for imstats box DONE
 * sort out clear mark/ clear last mark DONE
+* logfile entries for ruler/protractor DONE
+
 
