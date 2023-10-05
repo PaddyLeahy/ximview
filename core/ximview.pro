@@ -2520,7 +2520,7 @@ WIDGET_CONTROL, event.TOP,  GET_UVALUE = state
 WIDGET_CONTROL, state.TABS, GET_UVALUE = mode
 
 
-IF state.IS_ASTROM THEN astrom = *state.ASTROM ELSE BEGIN
+IF state.IS_ASTROM THEN astrom = state.ASTROM ELSE BEGIN
    ok = DIALOG_MESSAGE('No astrometry information to plot coordinates', $
                        /ERROR, DIALOG_PARENT = top)
    RETURN
